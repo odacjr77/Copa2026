@@ -1,164 +1,267 @@
-// ── Tab navigation ──────────────────────────────────────────────
-function showTab(name) {
-  document.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  event.target.classList.add('active');
+// ── Utilitários de data/hora ──────────────────────────────────────
+function hojeEmBRT() {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Sao_Paulo' }).format(new Date());
 }
 
-// ── Helpers ──────────────────────────────────────────────────────
-function flag(team) { return FLAGS[team] || '🏳'; }
-function fmt(score) { return score ? `${score.home} – ${score.away}` : 'vs'; }
-function fmtDate(d) {
-  if (!d || d === 'TBD') return 'TBD';
-  const [y, m, day] = d.split('-');
-  return new Date(y, m - 1, day).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+function formatarData(iso) {
+  const [a, m, d] = iso.split('-');
+  const dt = new Date(Number(a), Number(m) - 1, Number(d));
+  const dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+  const meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+  return `${dias[dt.getDay()]}, ${Number(d)} de ${meses[Number(m) - 1]}`;
 }
 
-// ── Groups tab ───────────────────────────────────────────────────
-function renderGroups() {
-  const grid = document.getElementById('groups-grid');
-  grid.innerHTML = Object.entries(GROUPS).map(([letter, g]) => `
-    <div class="group-card">
-      <div class="group-header">Group ${letter}</div>
+function statusJogo(jogo, hoje) {
+  if (jogo.data < hoje) return 'passado';
+  if (jogo.data === hoje) return 'hoje';
+  return 'futuro';
+}
+
+// ── Renderização de cards ─────────────────────────────────────────
+function cardJogo(j, hoje) {
+  const status = statusJogo(j, hoje);
+  const temPlacar = j.placar !== null;
+
+  let badgeStatus = '';
+  if (status === 'hoje' && !temPlacar) badgeStatus = '<span class="badge badge-hoje">HOJE</span>';
+  else if (temPlacar) badgeStatus = '<span class="badge badge-encerrado">ENCERRADO</span>';
+
+  const grupoLabel = j.grupo ? ` · Grupo ${j.grupo}` : '';
+
+  let placarHTML;
+  if (temPlacar) {
+    placarHTML = `
+      <div class="placar encerrado">
+        <span class="gol">${j.placar.casa}</span>
+        <span class="sep">–</span>
+        <span class="gol">${j.placar.fora}</span>
+      </div>`;
+  } else {
+    placarHTML = `<div class="placar futuro"><span class="hora-jogo">${j.horaBRT}</span><span class="brt">BRT</span></div>`;
+  }
+
+  return `
+    <div class="card-jogo ${status}">
+      <div class="card-topo">
+        <span class="fase-label">${j.fase}${grupoLabel}</span>
+        ${badgeStatus}
+      </div>
+      <div class="times-row">
+        <div class="time mandante">
+          <span class="bandeira">${bandeira(j.casa)}</span>
+          <span class="nome-time">${j.casa}</span>
+        </div>
+        ${placarHTML}
+        <div class="time visitante">
+          <span class="bandeira">${bandeira(j.fora)}</span>
+          <span class="nome-time">${j.fora}</span>
+        </div>
+      </div>
+      <div class="card-rodape">
+        <span class="info-local">📍 ${j.local}</span>
+        <span class="info-data">📅 ${j.data.split('-').reverse().join('/')} · ⏰ ${j.horaBRT} BRT</span>
+      </div>
+    </div>`;
+}
+
+// ── Scroll Infinito (aba Jogos) ───────────────────────────────────
+const LOTE = 3; // dias por carregamento
+
+let datasOrdenadas = [];
+let indiceFuturo = 0;
+let observerScroll = null;
+
+function iniciarJogos() {
+  const hoje = hojeEmBRT();
+  const todasDatas = [...new Set(JOGOS.map(j => j.data))].sort();
+  datasOrdenadas = todasDatas;
+
+  const idxHoje = todasDatas.findIndex(d => d >= hoje);
+  const inicio = Math.max(0, idxHoje);
+
+  const container = document.getElementById('lista-jogos');
+  container.innerHTML = '';
+
+  // Carregar: hoje + próximos LOTE dias
+  indiceFuturo = inicio;
+  carregarMaisDias(container, hoje, LOTE + 1);
+
+  // Botão "jogos anteriores"
+  const btnAntes = document.getElementById('btn-anteriores');
+  const datasPassadas = todasDatas.filter(d => d < hoje);
+  if (datasPassadas.length === 0) {
+    btnAntes.style.display = 'none';
+  } else {
+    btnAntes.style.display = 'flex';
+    btnAntes.onclick = () => mostrarPassados(datasPassadas, hoje);
+  }
+
+  // Observer do sentinel
+  const sentinel = document.getElementById('sentinel');
+  if (observerScroll) observerScroll.disconnect();
+  observerScroll = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) carregarMaisDias(container, hoje, LOTE);
+  }, { rootMargin: '300px' });
+  observerScroll.observe(sentinel);
+}
+
+function carregarMaisDias(container, hoje, quantidade) {
+  const sentinel = document.getElementById('sentinel');
+  let carregados = 0;
+
+  while (indiceFuturo < datasOrdenadas.length && carregados < quantidade) {
+    const data = datasOrdenadas[indiceFuturo];
+    const jogosNoDia = JOGOS.filter(j => j.data === data);
+    container.insertBefore(renderDia(data, jogosNoDia, hoje), sentinel);
+    indiceFuturo++;
+    carregados++;
+  }
+
+  if (indiceFuturo >= datasOrdenadas.length) {
+    sentinel.style.display = 'none';
+    if (observerScroll) observerScroll.disconnect();
+    const fim = document.createElement('p');
+    fim.className = 'fim-lista';
+    fim.textContent = '🏆 Fim da programação da Copa 2026';
+    container.appendChild(fim);
+  }
+}
+
+function mostrarPassados(datasPassadas, hoje) {
+  const container = document.getElementById('lista-jogos');
+  const btnAntes = document.getElementById('btn-anteriores');
+  const wrapper = document.createElement('div');
+  wrapper.id = 'bloco-passados';
+
+  datasPassadas.forEach(data => {
+    const jogosNoDia = JOGOS.filter(j => j.data === data);
+    wrapper.appendChild(renderDia(data, jogosNoDia, hoje));
+  });
+
+  container.insertBefore(wrapper, container.firstChild);
+  btnAntes.style.display = 'none';
+}
+
+function renderDia(data, jogos, hoje) {
+  const isHoje = data === hoje;
+  const bloco = document.createElement('div');
+  bloco.className = 'bloco-dia' + (isHoje ? ' dia-hoje' : '');
+  if (isHoje) bloco.id = 'dia-hoje';
+
+  bloco.innerHTML = `
+    <div class="cabecalho-dia">
+      <span class="data-label">${isHoje ? '📅 HOJE — ' : ''}${formatarData(data)}</span>
+      <span class="qtd-jogos">${jogos.length} jogo${jogos.length > 1 ? 's' : ''}</span>
+    </div>
+    ${jogos.map(j => cardJogo(j, hoje)).join('')}
+  `;
+  return bloco;
+}
+
+// ── Aba Grupos ────────────────────────────────────────────────────
+function renderGrupos() {
+  const grid = document.getElementById('grade-grupos');
+  grid.innerHTML = Object.entries(GRUPOS).map(([letra, times]) => `
+    <div class="card-grupo">
+      <div class="grupo-header">Grupo ${letra}</div>
       <ul>
-        ${g.teams.map(t => `<li>${flag(t)} ${t}</li>`).join('')}
+        ${times.map(t => `<li>${bandeira(t)} ${t}</li>`).join('')}
       </ul>
     </div>
   `).join('');
 }
 
-// ── Matches tab ──────────────────────────────────────────────────
-function populateGroupFilter() {
-  const sel = document.getElementById('filter-group');
-  Object.keys(GROUPS).forEach(g => {
-    const opt = document.createElement('option');
-    opt.value = g; opt.textContent = 'Group ' + g;
-    sel.appendChild(opt);
-  });
+// ── Aba Classificação ─────────────────────────────────────────────
+function popularFiltroGrupo() {
+  const sel = document.getElementById('sel-grupo');
+  sel.innerHTML = Object.keys(GRUPOS).map(g =>
+    `<option value="${g}">Grupo ${g}</option>`
+  ).join('');
 }
 
-function renderMatches() {
-  const gFilter = document.getElementById('filter-group').value;
-  const sFilter = document.getElementById('filter-stage').value;
-  const list = document.getElementById('matches-list');
-
-  const filtered = MATCHES.filter(m => {
-    const gOk = gFilter === 'all' || m.group === gFilter;
-    const sOk = sFilter === 'all' || m.stage === sFilter;
-    return gOk && sOk;
-  });
-
-  if (!filtered.length) { list.innerHTML = '<p class="empty">No matches found.</p>'; return; }
-
-  // Group by date
-  const byDate = {};
-  filtered.forEach(m => { (byDate[m.date] = byDate[m.date] || []).push(m); });
-
-  list.innerHTML = Object.entries(byDate).sort(([a],[b]) => a.localeCompare(b)).map(([date, ms]) => `
-    <div class="date-group">
-      <div class="date-label">${fmtDate(date)}</div>
-      ${ms.map(m => `
-        <div class="match-card ${m.score ? 'played' : ''}">
-          <span class="stage-badge">${m.stage}${m.group ? ' · Group ' + m.group : ''}</span>
-          <div class="match-row">
-            <span class="team home">${flag(m.home)} ${m.home}</span>
-            <span class="score ${m.score ? 'final' : 'upcoming'}">${fmt(m.score)}</span>
-            <span class="team away">${flag(m.away)} ${m.away}</span>
-          </div>
-          <span class="venue">📍 ${m.venue} &nbsp;·&nbsp; ⏰ ${m.time}</span>
-        </div>
-      `).join('')}
-    </div>
-  `).join('');
-}
-
-// ── Standings tab ────────────────────────────────────────────────
-function populateStandingsFilter() {
-  const sel = document.getElementById('standings-group');
-  Object.keys(GROUPS).forEach(g => {
-    const opt = document.createElement('option');
-    opt.value = g; opt.textContent = 'Group ' + g;
-    sel.appendChild(opt);
-  });
-}
-
-function computeStandings(groupLetter) {
-  const teams = GROUPS[groupLetter].teams;
+function calcularClassificacao(letra) {
+  const times = GRUPOS[letra];
   const stats = {};
-  teams.forEach(t => { stats[t] = { p:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 }; });
+  times.forEach(t => { stats[t] = { j: 0, v: 0, e: 0, d: 0, gp: 0, gc: 0, pts: 0 }; });
 
-  MATCHES.filter(m => m.group === groupLetter && m.score).forEach(m => {
-    const h = stats[m.home], a = stats[m.away];
-    h.p++; a.p++;
-    h.gf += m.score.home; h.ga += m.score.away;
-    a.gf += m.score.away; a.ga += m.score.home;
-    if (m.score.home > m.score.away) { h.w++; h.pts += 3; a.l++; }
-    else if (m.score.home < m.score.away) { a.w++; a.pts += 3; h.l++; }
-    else { h.d++; a.d++; h.pts++; a.pts++; }
+  JOGOS.filter(j => j.grupo === letra && j.placar).forEach(j => {
+    const c = stats[j.casa], f = stats[j.fora];
+    c.j++; f.j++;
+    c.gp += j.placar.casa; c.gc += j.placar.fora;
+    f.gp += j.placar.fora; f.gc += j.placar.casa;
+    if (j.placar.casa > j.placar.fora)      { c.v++; c.pts += 3; f.d++; }
+    else if (j.placar.casa < j.placar.fora) { f.v++; f.pts += 3; c.d++; }
+    else                                     { c.e++; f.e++; c.pts++; f.pts++; }
   });
 
-  return teams
-    .map(t => ({ team: t, ...stats[t], gd: stats[t].gf - stats[t].ga }))
-    .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+  return times
+    .map(t => ({ time: t, ...stats[t], sg: stats[t].gp - stats[t].gc }))
+    .sort((a, b) => b.pts - a.pts || b.sg - a.sg || b.gp - a.gp);
 }
 
-function renderStandings() {
-  const g = document.getElementById('standings-group').value;
-  const rows = computeStandings(g);
-  document.getElementById('standings-table').innerHTML = `
-    <table class="standings">
-      <thead>
-        <tr><th>#</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>
-      </thead>
-      <tbody>
-        ${rows.map((r, i) => `
-          <tr class="${i < 2 ? 'qualify' : ''}">
-            <td>${i + 1}</td>
-            <td class="team-cell">${flag(r.team)} ${r.team}</td>
-            <td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td>
-            <td>${r.gf}</td><td>${r.ga}</td><td>${r.gd > 0 ? '+' : ''}${r.gd}</td>
-            <td class="pts">${r.pts}</td>
+function renderClassificacao() {
+  const letra = document.getElementById('sel-grupo').value;
+  const linhas = calcularClassificacao(letra);
+  document.getElementById('tabela-classificacao').innerHTML = `
+    <div class="tabela-scroll">
+      <table class="classificacao">
+        <thead>
+          <tr>
+            <th>#</th><th class="col-time">Time</th>
+            <th title="Jogos">J</th><th title="Vitórias">V</th>
+            <th title="Empates">E</th><th title="Derrotas">D</th>
+            <th title="Gols Pró">GP</th><th title="Gols Contra">GC</th>
+            <th title="Saldo de Gols">SG</th><th title="Pontos">Pts</th>
           </tr>
-        `).join('')}
-      </tbody>
-    </table>
-    <p class="note">🟩 Top 2 teams advance to knockout stage</p>
+        </thead>
+        <tbody>
+          ${linhas.map((r, i) => `
+            <tr class="${i < 2 ? 'classifica' : ''}">
+              <td>${i + 1}</td>
+              <td class="col-time">${bandeira(r.time)} ${r.time}</td>
+              <td>${r.j}</td><td>${r.v}</td><td>${r.e}</td><td>${r.d}</td>
+              <td>${r.gp}</td><td>${r.gc}</td>
+              <td>${r.sg > 0 ? '+' : ''}${r.sg}</td>
+              <td class="pts-col">${r.pts}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+    <p class="legenda">🟩 Os 2 primeiros se classificam para as oitavas</p>
   `;
 }
 
-// ── Knockout tab ─────────────────────────────────────────────────
-function renderKnockout() {
-  const stages = ['Round of 32', 'Round of 16', 'Quarter-final', 'Semi-final', 'Final'];
-  const bracket = document.getElementById('knockout-bracket');
-  bracket.innerHTML = stages.map(stage => {
-    const ms = MATCHES.filter(m => m.stage === stage);
+// ── Aba Mata-Mata ─────────────────────────────────────────────────
+function renderMataMata() {
+  const fases = ['Oitavas de Final', 'Quartas de Final', 'Semifinal', 'Disputa 3º Lugar', 'Final'];
+  const hoje = hojeEmBRT();
+  document.getElementById('bracket').innerHTML = fases.map(fase => {
+    const jogos = JOGOS.filter(j => j.fase === fase);
     return `
-      <div class="ko-stage">
-        <h3>${stage}</h3>
-        <div class="ko-matches">
-          ${ms.length ? ms.map(m => `
-            <div class="match-card ${m.score ? 'played' : ''}">
-              <div class="match-row">
-                <span class="team home">${flag(m.home)} ${m.home}</span>
-                <span class="score ${m.score ? 'final' : 'upcoming'}">${fmt(m.score)}</span>
-                <span class="team away">${flag(m.away)} ${m.away}</span>
-              </div>
-              <span class="venue">📍 ${m.venue} &nbsp;·&nbsp; 📅 ${fmtDate(m.date)}</span>
-            </div>
-          `).join('') : '<p class="empty">Matches TBD</p>'}
+      <div class="fase-ko">
+        <h3 class="titulo-fase">${fase}</h3>
+        <div class="jogos-fase">
+          ${jogos.map(j => cardJogo(j, hoje)).join('')}
         </div>
-      </div>
-    `;
+      </div>`;
   }).join('');
 }
 
-// ── Init ─────────────────────────────────────────────────────────
+// ── Navegação por abas ────────────────────────────────────────────
+function mostrarAba(nome, btn) {
+  document.querySelectorAll('.conteudo-aba').forEach(el => el.classList.remove('ativa'));
+  document.querySelectorAll('.btn-aba').forEach(el => el.classList.remove('ativa'));
+  document.getElementById('aba-' + nome).classList.add('ativa');
+  btn.classList.add('ativa');
+}
+
+// ── Init ──────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  renderGroups();
-  populateGroupFilter();
-  renderMatches();
-  populateStandingsFilter();
-  renderStandings();
-  renderKnockout();
+  iniciarJogos();
+  renderGrupos();
+  popularFiltroGrupo();
+  renderClassificacao();
+  renderMataMata();
+  document.getElementById('sel-grupo').addEventListener('change', renderClassificacao);
 });
