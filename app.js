@@ -271,21 +271,40 @@ function mostrarAba(nome, btn) {
   btn.classList.add('ativa');
 }
 
+// ── Carrega resultados do resultados.json (atualizado pela Action) ─
+async function carregarResultados() {
+  try {
+    // Cache-bust a cada 5 minutos para garantir dados frescos
+    const v = Math.floor(Date.now() / (5 * 60 * 1000));
+    const resp = await fetch(`resultados.json?v=${v}`);
+    if (!resp.ok) return;
+    const res = await resp.json();
+
+    // Aplica placares sobre JOGOS (sobrescreve dados de data.js)
+    JOGOS.forEach(j => {
+      const chave = `${j.casa}|${j.fora}`;
+      if (res[chave] !== undefined) j.placar = res[chave];
+    });
+
+    // Exibe timestamp da última atualização
+    if (res._atualizado) {
+      const dt = new Date(res._atualizado);
+      const label = dt.toLocaleString('pt-BR', {
+        timeZone: 'America/Sao_Paulo',
+        day: '2-digit', month: '2-digit',
+        hour: '2-digit', minute: '2-digit',
+      });
+      const el = document.getElementById('ultima-atualizacao');
+      if (el) el.textContent = `Atualizado: ${label} BRT`;
+    }
+  } catch (_) {
+    // Sem rede ou arquivo ausente: usa dados de data.js
+  }
+}
+
 // ── Init ──────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
-  try {
-    window.JOGOS = await carregarJogos();
-  } catch (e) {
-    console.error('Erro ao carregar jogos:', e);
-    document.getElementById('lista-jogos').innerHTML =
-      `<p class="erro-carregamento">⚠️ Não foi possível carregar os jogos.<br>
-       Verifique se a planilha está compartilhada como pública.<br>
-       <small>${e.message}</small></p>`;
-    return;
-  }
-
-  document.getElementById('msg-carregando')?.remove();
-
+  await carregarResultados();
   iniciarJogos();
   renderGrupos();
   popularFiltroGrupo();

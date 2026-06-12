@@ -67,6 +67,16 @@ function parseData(val) {
   return String(val);
 }
 
+// ── Jogos estáticos (fallback se a planilha estiver indisponível) ──
+// var (não const) para que window.JOGOS = carregarJogos() possa substituir
+// horaBRT: horário de Brasília (UTC-3)
+// placar: null = não realizado, { casa: N, fora: N } = encerrado
+var JOGOS = [
+  // ── 11/jun ──
+  { id: 1,  fase: "Fase de Grupos", grupo: "A", data: "2026-06-11", horaBRT: "22:00", casa: "Estados Unidos", fora: "Panamá",      local: "SoFi Stadium, Los Angeles",          placar: null },
+  { id: 2,  fase: "Fase de Grupos", grupo: "E", data: "2026-06-11", horaBRT: "19:00", casa: "Argentina",      fora: "Costa Rica",  local: "Estadio Azteca, Cidade do México",   placar: null },
+  { id: 3,  fase: "Fase de Grupos", grupo: "D", data: "2026-06-11", horaBRT: "23:00", casa: "Brasil",         fora: "Camarões",    local: "MetLife Stadium, Nova York",          placar: null },
+
 // Hora: "Date(1899,11,30,16,0,0)" → "16:00"
 function parseHora(val) {
   if (!val) return '--:--';
