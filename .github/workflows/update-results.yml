@@ -1,0 +1,59 @@
+name: Atualizar Resultados Copa 2026
+
+# ──────────────────────────────────────────────────────────────────
+# CONFIGURAÇÃO NECESSÁRIA (apenas uma vez):
+#
+# 1. Crie uma conta gratuita em https://www.football-data.org/client/register
+# 2. No GitHub, vá em Settings → Secrets and variables → Actions
+# 3. Clique em "New repository secret" e crie:
+#    Nome:  FOOTBALL_DATA_TOKEN
+#    Valor: [seu token do football-data.org]
+#
+# Sem o token, a action usa a API pública da ESPN (sem cadastro).
+# ──────────────────────────────────────────────────────────────────
+
+on:
+  schedule:
+    # A cada 20 minutos — cobre todos os horários de jogo em BRT
+    - cron: '*/20 * * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Forçar atualização mesmo sem mudanças'
+        required: false
+        default: 'false'
+
+jobs:
+  atualizar-resultados:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar dependências
+        run: pip install requests
+
+      - name: Buscar e atualizar resultados
+        env:
+          FOOTBALL_DATA_TOKEN: ${{ secrets.FOOTBALL_DATA_TOKEN }}
+        run: python scripts/update_results.py
+
+      - name: Commit e push se houver mudanças
+        run: |
+          git config user.name  "Copa2026 Bot"
+          git config user.email "copa2026-bot@noreply.github.com"
+          git add resultados.json
+          if git diff --staged --quiet && [ "${{ github.event.inputs.force }}" != "true" ]; then
+            echo "Nenhuma mudança nos resultados. Nada a commitar."
+          else
+            git commit -m "Atualiza resultados [$(date -u '+%d/%m %H:%M UTC')]" || echo "Nada para commitar."
+            git push
+          fi
