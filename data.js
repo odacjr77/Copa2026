@@ -1,52 +1,65 @@
 const SHEET_ID = '15doR2R2qaBXsiH-xrekydCPEsldxUKvg99EYAOiblyU';
 
-// ── Times (nome PT + bandeira) ────────────────────────────────────
+// ── Bandeiras ─────────────────────────────────────────────────────
 const TIMES = {
-  "Estados Unidos": "🇺🇸", "México": "🇲🇽", "Canadá": "🇨🇦",
-  "Brasil": "🇧🇷", "Argentina": "🇦🇷", "Uruguai": "🇺🇾",
-  "Colômbia": "🇨🇴", "Equador": "🇪🇨", "Chile": "🇨🇱",
-  "Paraguai": "🇵🇾", "Peru": "🇵🇪", "Bolívia": "🇧🇴",
-  "Venezuela": "🇻🇪", "França": "🇫🇷", "Alemanha": "🇩🇪",
-  "Espanha": "🇪🇸", "Portugal": "🇵🇹", "Inglaterra": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-  "Holanda": "🇳🇱", "Itália": "🇮🇹", "Bélgica": "🇧🇪",
-  "Croácia": "🇭🇷", "Sérvia": "🇷🇸", "Polônia": "🇵🇱",
-  "Suíça": "🇨🇭", "Dinamarca": "🇩🇰", "Áustria": "🇦🇹",
-  "Ucrânia": "🇺🇦", "Escócia": "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "Romênia": "🇷🇴",
-  "Turquia": "🇹🇷", "Grécia": "🇬🇷", "Eslováquia": "🇸🇰",
-  "Albânia": "🇦🇱", "Japão": "🇯🇵", "Coreia do Sul": "🇰🇷",
-  "Austrália": "🇦🇺", "Irã": "🇮🇷", "Arábia Saudita": "🇸🇦",
-  "Catar": "🇶🇦", "Iraque": "🇮🇶",
-  "Jordânia": "🇯🇴", "Nova Zelândia": "🇳🇿", "Marrocos": "🇲🇦",
-  "Senegal": "🇸🇳", "Nigéria": "🇳🇬", "Gana": "🇬🇭",
-  "Camarões": "🇨🇲", "Costa do Marfim": "🇨🇮", "Egito": "🇪🇬",
-  "Argélia": "🇩🇿", "Tunísia": "🇹🇳", "Mali": "🇲🇱",
-  "África do Sul": "🇿🇦", "Panamá": "🇵🇦", "Costa Rica": "🇨🇷",
-  "Honduras": "🇭🇳", "Jamaica": "🇯🇲", "El Salvador": "🇸🇻",
-  "Pais de Gales": "🏴󠁧󠁢󠁷󠁬󠁳󠁿",
+  // Américas
+  "Estados Unidos":       "🇺🇸", "México":             "🇲🇽", "Canadá":          "🇨🇦",
+  "Brasil":               "🇧🇷", "Argentina":          "🇦🇷", "Uruguai":         "🇺🇾",
+  "Colômbia":             "🇨🇴", "Equador":            "🇪🇨", "Chile":           "🇨🇱",
+  "Paraguai":             "🇵🇾", "Peru":               "🇵🇪", "Bolívia":         "🇧🇴",
+  "Venezuela":            "🇻🇪", "Haiti":              "🇭🇹", "Panamá":          "🇵🇦",
+  "Costa Rica":           "🇨🇷", "Honduras":           "🇭🇳", "Jamaica":         "🇯🇲",
+  "El Salvador":          "🇸🇻", "Curaçao":            "🇨🇼",
+  // Europa
+  "França":               "🇫🇷", "Alemanha":           "🇩🇪", "Espanha":         "🇪🇸",
+  "Portugal":             "🇵🇹", "Inglaterra":         "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "Países Baixos":   "🇳🇱",
+  "Itália":               "🇮🇹", "Bélgica":            "🇧🇪", "Croácia":         "🇭🇷",
+  "Sérvia":               "🇷🇸", "Polônia":            "🇵🇱", "Suíça":           "🇨🇭",
+  "Dinamarca":            "🇩🇰", "Áustria":            "🇦🇹", "Ucrânia":         "🇺🇦",
+  "Escócia":              "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "Romênia":           "🇷🇴", "Turquia":         "🇹🇷",
+  "Grécia":               "🇬🇷", "Eslováquia":         "🇸🇰", "Albânia":         "🇦🇱",
+  "Tchéquia":             "🇨🇿", "Bósnia e Herzegovina":"🇧🇦", "Noruega":        "🇳🇴",
+  "Suécia":               "🇸🇪",
+  // Ásia / Oceania
+  "Japão":                "🇯🇵", "Coreia do Sul":      "🇰🇷", "Austrália":       "🇦🇺",
+  "Irã":                  "🇮🇷", "Arábia Saudita":     "🇸🇦", "Catar":           "🇶🇦",
+  "Iraque":               "🇮🇶", "Jordânia":           "🇯🇴", "Nova Zelândia":   "🇳🇿",
+  "Uzbequistão":          "🇺🇿",
+  // África
+  "Marrocos":             "🇲🇦", "Senegal":            "🇸🇳", "Nigéria":         "🇳🇬",
+  "Gana":                 "🇬🇭", "Camarões":           "🇨🇲", "Costa do Marfim": "🇨🇮",
+  "Egito":                "🇪🇬", "Argélia":            "🇩🇿", "Tunísia":         "🇹🇳",
+  "Mali":                 "🇲🇱", "África do Sul":      "🇿🇦", "Cabo Verde":      "🇨🇻",
+  "RD Congo":             "🇨🇩",
 };
 
-function bandeira(time) { return TIMES[time] || "🏳"; }
+function bandeira(time) {
+  if (!time) return "🏳";
+  if (time.startsWith("Vencedor") || time.startsWith("Perdedor") ||
+      time.startsWith("2º") || time.startsWith("3º") || time === "TBD") return "🏳";
+  return TIMES[time] || "🏳";
+}
 
 // ── Grupos ────────────────────────────────────────────────────────
 const GRUPOS = {
-  A: ["Estados Unidos", "Panamá", "Colômbia", "Marrocos"],
-  B: ["México", "Uruguai", "Polônia", "Senegal"],
-  C: ["Canadá", "Bélgica", "Croácia", "Argélia"],
-  D: ["Brasil", "Sérvia", "Suíça", "Camarões"],
-  E: ["Argentina", "Alemanha", "Japão", "Costa Rica"],
-  F: ["França", "Portugal", "Austrália", "Nigéria"],
-  G: ["Inglaterra", "Espanha", "Coreia do Sul", "Panamá"],
-  H: ["Itália", "Dinamarca", "Arábia Saudita", "Egito"],
-  I: ["Irã", "Chile", "Costa do Marfim", "Honduras"],
-  J: ["Catar", "Gana", "Escócia", "Jamaica"],
-  K: ["Turquia", "Ucrânia", "Romênia", "Nova Zelândia"],
-  L: ["Holanda", "Equador", "Tunísia", "El Salvador"],
+  A: ["México",        "Coreia do Sul",         "Tchéquia",      "África do Sul"],
+  B: ["Canadá",        "Bósnia e Herzegovina",   "Catar",         "Suíça"],
+  C: ["Brasil",        "Escócia",                "Haiti",         "Marrocos"],
+  D: ["Estados Unidos","Paraguai",               "Austrália",     "Turquia"],
+  E: ["Alemanha",      "Curaçao",                "Costa do Marfim","Equador"],
+  F: ["Países Baixos", "Japão",                  "Suécia",        "Tunísia"],
+  G: ["Bélgica",       "Egito",                  "Irã",           "Nova Zelândia"],
+  H: ["Espanha",       "Uruguai",                "Arábia Saudita","Cabo Verde"],
+  I: ["França",        "Senegal",                "Noruega",       "Iraque"],
+  J: ["Argentina",     "Áustria",                "Argélia",       "Jordânia"],
+  K: ["Portugal",      "Colômbia",               "RD Congo",      "Uzbequistão"],
+  L: ["Inglaterra",    "Croácia",                "Gana",          "Panamá"],
 };
 
-// ── Leitura de jogos via Google Sheets ───────────────────────────
-// Converte célula de data do gviz ("Date(2026,5,11)" → "2026-06-11")
+// ── Parsers gviz ──────────────────────────────────────────────────
+// Data: "Date(2026,5,11)" → "2026-06-11"  (mês é 0-indexado no gviz)
 function parseData(val) {
-  if (val == null) return 'TBD';
+  if (!val) return 'TBD';
   if (typeof val === 'string' && val.startsWith('Date(')) {
     const [y, m, d] = val.slice(5, -1).split(',').map(Number);
     return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
@@ -54,20 +67,33 @@ function parseData(val) {
   return String(val);
 }
 
-// Converte célula de hora do gviz (fração decimal → "HH:MM")
+// Hora: "Date(1899,11,30,16,0,0)" → "16:00"
 function parseHora(val) {
-  if (val == null) return 'TBD';
-  if (typeof val === 'number') {
-    const totalMins = Math.round(val * 24 * 60);
-    const h = Math.floor(totalMins / 60);
-    const m = totalMins % 60;
+  if (!val) return '--:--';
+  if (typeof val === 'string' && val.startsWith('Date(')) {
+    const parts = val.slice(5, -1).split(',').map(Number);
+    const h = parts[3] ?? 0;
+    const m = parts[4] ?? 0;
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  }
+  if (typeof val === 'number') {
+    const mins = Math.round(val * 1440);
+    return `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`;
   }
   return String(val);
 }
 
+// Fase: "Fase de grupos - Grupo A" → { fase, grupo }
+function parseFase(faseStr) {
+  if (!faseStr) return { fase: '', grupo: null };
+  const m = faseStr.match(/Fase de grupos - Grupo ([A-L])/i);
+  if (m) return { fase: 'Fase de Grupos', grupo: m[1].toUpperCase() };
+  return { fase: faseStr, grupo: null };
+}
+
+// ── Carga via Google Sheets gviz/tq ───────────────────────────────
 async function carregarJogos() {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=jogos&headers=1`;
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Jogos&headers=1`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const text = await res.text();
@@ -83,17 +109,23 @@ async function carregarJogos() {
       return obj;
     });
 
-  return rows.map(r => ({
-    id:      Number(r.id),
-    fase:    String(r.fase || ''),
-    grupo:   r.grupo ? String(r.grupo) : null,
-    data:    parseData(r.data),
-    horaBRT: parseHora(r.horaBRT),
-    casa:    String(r.casa  || 'A definir'),
-    fora:    String(r.fora  || 'A definir'),
-    local:   String(r.local || ''),
-    placar:  (r.placar_casa != null && r.placar_fora != null)
-      ? { casa: Number(r.placar_casa), fora: Number(r.placar_fora) }
-      : null,
-  }));
+  return rows.map((r, idx) => {
+    const { fase, grupo } = parseFase(r['Fase']);
+    const encerrado = r['Status'] === 'Encerrado';
+    const gc = r['Resultado Time 1'];
+    const gf = r['Resultado Time 2'];
+    return {
+      id:      idx + 1,
+      fase,
+      grupo,
+      data:    parseData(r['Data']),
+      horaBRT: parseHora(r['Hora (Brasil)']),
+      casa:    String(r['Time 1'] || 'A definir'),
+      fora:    String(r['Time 2'] || 'A definir'),
+      local:   String(r['Local']  || ''),
+      placar:  (encerrado && gc != null && gf != null)
+               ? { casa: Number(gc), fora: Number(gf) }
+               : null,
+    };
+  });
 }

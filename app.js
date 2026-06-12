@@ -249,7 +249,7 @@ function renderClassificacao() {
 
 // ── Aba Mata-Mata ─────────────────────────────────────────────────
 function renderMataMata() {
-  const fases = ['Oitavas de Final', 'Quartas de Final', 'Semifinal', 'Disputa 3º Lugar', 'Final'];
+  const fases = ['16 avos de final', 'Oitavas de final', 'Quartas de final', 'Semifinal', 'Disputa de 3º lugar', 'Final'];
   const hoje = hojeEmBRT();
   document.getElementById('bracket').innerHTML = fases.map(fase => {
     const jogos = JOGOS.filter(j => j.fase === fase);
