@@ -96,18 +96,30 @@ function iniciarJogos() {
     btnAntes.onclick = () => mostrarPassados(datasPassadas, hoje);
   }
 
-  // Observer do sentinel
+  // Botão "Ver mais" + observer como fallback
   const sentinel = document.getElementById('sentinel');
+  const btnVer   = document.getElementById('btn-ver-mais');
+  if (btnVer) {
+    btnVer.onclick = () => carregarMaisDias(container, hoje, LOTE);
+  }
   if (observerScroll) observerScroll.disconnect();
-  observerScroll = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) carregarMaisDias(container, hoje, LOTE);
-  }, { rootMargin: '300px' });
-  observerScroll.observe(sentinel);
+  if (sentinel) {
+    observerScroll = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && btnVer && !btnVer.disabled) btnVer.click();
+    }, { rootMargin: '100px' });
+    observerScroll.observe(sentinel);
+  }
 }
 
 function carregarMaisDias(container, hoje, quantidade) {
   const sentinel = document.getElementById('sentinel');
+  const btnVer   = document.getElementById('btn-ver-mais');
   let carregados = 0;
+
+  if (btnVer) {
+    btnVer.disabled = true;
+    btnVer.innerHTML = '<span class="loading-dots"><span></span><span></span><span></span></span>';
+  }
 
   while (indiceFuturo < datasOrdenadas.length && carregados < quantidade) {
     const data = datasOrdenadas[indiceFuturo];
@@ -118,12 +130,15 @@ function carregarMaisDias(container, hoje, quantidade) {
   }
 
   if (indiceFuturo >= datasOrdenadas.length) {
-    sentinel.style.display = 'none';
+    if (sentinel) sentinel.style.display = 'none';
     if (observerScroll) observerScroll.disconnect();
     const fim = document.createElement('p');
     fim.className = 'fim-lista';
     fim.textContent = '🏆 Fim da programação da Copa 2026';
     container.appendChild(fim);
+  } else if (btnVer) {
+    btnVer.disabled = false;
+    btnVer.innerHTML = '<span class="seta">⬇</span> Ver mais jogos';
   }
 }
 
@@ -257,7 +272,20 @@ function mostrarAba(nome, btn) {
 }
 
 // ── Init ──────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    window.JOGOS = await carregarJogos();
+  } catch (e) {
+    console.error('Erro ao carregar jogos:', e);
+    document.getElementById('lista-jogos').innerHTML =
+      `<p class="erro-carregamento">⚠️ Não foi possível carregar os jogos.<br>
+       Verifique se a planilha está compartilhada como pública.<br>
+       <small>${e.message}</small></p>`;
+    return;
+  }
+
+  document.getElementById('msg-carregando')?.remove();
+
   iniciarJogos();
   renderGrupos();
   popularFiltroGrupo();

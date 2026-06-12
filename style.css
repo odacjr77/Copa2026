@@ -3,17 +3,17 @@
 
 :root {
   --azul-escuro:  #0d1b2e;
-  --azul-medio:   #102a4c;
-  --azul-card:    #142035;
-  --azul-borda:   #1e3a5f;
+  --azul-medio:   #112e54;
+  --azul-card:    #162c4a;
+  --azul-borda:   #2a4f7a;
   --azul-ativo:   #1565c0;
   --azul-claro:   #64b5f6;
   --azul-palido:  #90caf9;
   --verde:        #1b5e20;
   --verde-claro:  #a5d6a7;
   --amarelo:      #f9a825;
-  --cinza:        #546e7a;
-  --texto:        #e8eaf0;
+  --cinza:        #8fb4cc;
+  --texto:        #f2f6ff;
   --raio:         12px;
   --raio-sm:      8px;
 }
@@ -138,7 +138,7 @@ main { padding: 0 0 80px; }
 }
 
 .data-label {
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: var(--azul-claro);
   text-transform: uppercase;
@@ -148,7 +148,7 @@ main { padding: 0 0 80px; }
 .dia-hoje .data-label { color: var(--amarelo); }
 
 .qtd-jogos {
-  font-size: 0.75rem;
+  font-size: 0.82rem;
   color: var(--cinza);
 }
 
@@ -180,8 +180,8 @@ main { padding: 0 0 80px; }
 }
 
 .fase-label {
-  font-size: 0.72rem;
-  color: var(--cinza);
+  font-size: 0.8rem;
+  color: var(--azul-palido);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.4px;
@@ -217,13 +217,13 @@ main { padding: 0 0 80px; }
   min-width: 0;
 }
 
-.bandeira { font-size: 1.8rem; line-height: 1; }
+.bandeira { font-size: 2.4rem; line-height: 1; }
 
 .nome-time {
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   font-weight: 700;
   text-align: center;
-  color: var(--texto);
+  color: #fff;
   word-break: break-word;
   hyphens: auto;
 }
@@ -244,13 +244,13 @@ main { padding: 0 0 80px; }
 .placar.encerrado { background: var(--verde); }
 
 .gol {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 900;
   color: #fff;
 }
 
 .sep {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: var(--azul-claro);
   font-weight: 300;
 }
@@ -262,13 +262,13 @@ main { padding: 0 0 80px; }
 }
 
 .hora-jogo {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--azul-claro);
 }
 
 .brt {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   color: var(--cinza);
   letter-spacing: 1px;
 }
@@ -283,26 +283,50 @@ main { padding: 0 0 80px; }
 }
 
 .info-local, .info-data {
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   color: var(--cinza);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* ── Sentinel / loading ──────────────────────────────────────── */
+/* ── Sentinel / Ver mais ─────────────────────────────────────── */
 .sentinel {
   display: flex;
   justify-content: center;
-  padding: 24px;
+  padding: 20px 16px 28px;
 }
+
+.btn-ver-mais {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  background: var(--azul-medio);
+  border: 1.5px solid var(--azul-claro);
+  border-radius: 30px;
+  color: var(--azul-claro);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  letter-spacing: 0.3px;
+}
+.btn-ver-mais:hover {
+  background: #1a3f6e;
+  box-shadow: 0 0 0 3px rgba(100,181,246,0.2);
+  transform: translateY(-1px);
+}
+.btn-ver-mais:active { transform: translateY(0); }
+.btn-ver-mais .seta { font-size: 1.1rem; }
 
 .loading-dots { display: flex; gap: 6px; }
 .loading-dots span {
   width: 8px; height: 8px;
   border-radius: 50%;
-  background: var(--azul-borda);
+  background: var(--azul-claro);
   animation: bounce 1.2s infinite;
+  opacity: 0.5;
 }
 .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
 .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
@@ -315,7 +339,7 @@ main { padding: 0 0 80px; }
 .fim-lista {
   text-align: center;
   color: var(--cinza);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   padding: 24px 16px;
 }
 
@@ -504,4 +528,27 @@ footer {
   .titulo-secao { padding: 20px 0 6px; }
   .subtitulo-secao { padding: 0 0 16px; }
   .filtro-grupo { padding: 14px 0; }
+}
+
+/* ── Carregamento / Erro ─────────────────────────────────────── */
+.msg-carregando {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 40px 0;
+  justify-content: center;
+  color: var(--cinza);
+  font-size: 0.95rem;
+}
+
+.erro-carregamento {
+  text-align: center;
+  padding: 40px 20px;
+  color: #ef9a9a;
+  line-height: 1.7;
+}
+
+.erro-carregamento small {
+  color: var(--cinza);
+  font-size: 0.78rem;
 }

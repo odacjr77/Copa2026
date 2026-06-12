@@ -36,9 +36,15 @@
         ↑ Ver jogos anteriores
       </button>
       <div id="lista-jogos">
+        <p id="msg-carregando" class="msg-carregando">
+          <span class="loading-dots"><span></span><span></span><span></span></span>
+          Carregando jogos...
+        </p>
         <!-- dias injetados pelo JS -->
         <div id="sentinel" class="sentinel">
-          <span class="loading-dots"><span></span><span></span><span></span></span>
+          <button class="btn-ver-mais" id="btn-ver-mais">
+            <span class="seta">⬇</span> Ver mais jogos
+          </button>
         </div>
       </div>
     </section>
