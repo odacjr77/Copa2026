@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FIFA World Cup 2026 Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="trophy-icon">🏆</div>
+      <div>
+        <h1>FIFA World Cup 2026</h1>
+        <p class="subtitle">USA · Canada · Mexico &nbsp;|&nbsp; June 11 – July 19, 2026</p>
+      </div>
+    </div>
+    <nav>
+      <button class="tab-btn active" onclick="showTab('groups')">Groups</button>
+      <button class="tab-btn" onclick="showTab('matches')">Matches</button>
+      <button class="tab-btn" onclick="showTab('standings')">Standings</button>
+      <button class="tab-btn" onclick="showTab('knockout')">Knockout</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- GROUPS TAB -->
+    <section id="tab-groups" class="tab-content active">
+      <h2>Group Stage — 48 Teams, 12 Groups</h2>
+      <div class="groups-grid" id="groups-grid"></div>
+    </section>
+
+    <!-- MATCHES TAB -->
+    <section id="tab-matches" class="tab-content">
+      <h2>Match Schedule</h2>
+      <div class="filter-bar">
+        <label>Filter by Group:
+          <select id="filter-group" onchange="renderMatches()">
+            <option value="all">All Groups</option>
+          </select>
+        </label>
+        <label>Filter by Stage:
+          <select id="filter-stage" onchange="renderMatches()">
+            <option value="all">All Stages</option>
+            <option value="Group Stage">Group Stage</option>
+            <option value="Round of 32">Round of 32</option>
+            <option value="Round of 16">Round of 16</option>
+            <option value="Quarter-final">Quarter-final</option>
+            <option value="Semi-final">Semi-final</option>
+            <option value="Final">Final</option>
+          </select>
+        </label>
+      </div>
+      <div id="matches-list"></div>
+    </section>
+
+    <!-- STANDINGS TAB -->
+    <section id="tab-standings" class="tab-content">
+      <h2>Group Standings</h2>
+      <div class="filter-bar">
+        <label>Select Group:
+          <select id="standings-group" onchange="renderStandings()">
+          </select>
+        </label>
+      </div>
+      <div id="standings-table"></div>
+    </section>
+
+    <!-- KNOCKOUT TAB -->
+    <section id="tab-knockout" class="tab-content">
+      <h2>Knockout Stage</h2>
+      <div id="knockout-bracket"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>FIFA World Cup 2026 Tracker &nbsp;·&nbsp; Data updated manually &nbsp;·&nbsp; Built with ❤️</p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
