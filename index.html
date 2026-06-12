@@ -21,7 +21,6 @@
     </div>
     <nav class="abas-nav">
       <button class="btn-aba ativa" onclick="mostrarAba('jogos', this)">⚽ Jogos</button>
-      <button class="btn-aba" onclick="mostrarAba('grupos', this)">🌐 Grupos</button>
       <button class="btn-aba" onclick="mostrarAba('classificacao', this)">📊 Classificação</button>
       <button class="btn-aba" onclick="mostrarAba('matamata', this)">🏅 Mata-Mata</button>
       <button class="btn-aba" onclick="window.location.href='bolao.html'">🏇 Bolão</button>
@@ -41,29 +40,21 @@
           Carregando jogos...
         </p>
         <!-- dias injetados pelo JS -->
-        <div id="sentinel" class="sentinel">
-          <button class="btn-ver-mais" id="btn-ver-mais">
-            <span class="seta">⬇</span> Ver mais jogos
-          </button>
-        </div>
       </div>
-    </section>
-
-    <!-- ── ABA GRUPOS ─────────────────────────────────────── -->
-    <section id="aba-grupos" class="conteudo-aba">
-      <h2 class="titulo-secao">Fase de Grupos</h2>
-      <p class="subtitulo-secao">48 seleções · 12 grupos · 2 classificados por grupo + 8 melhores 3ºs</p>
-      <div id="grade-grupos" class="grade-grupos"></div>
+      <!-- sentinel fora do lista-jogos para não ser apagado ao recarregar -->
+      <div id="sentinel" class="sentinel">
+        <button class="btn-ver-mais" id="btn-ver-mais">
+          <span class="seta">⬇</span> Ver mais jogos
+        </button>
+      </div>
     </section>
 
     <!-- ── ABA CLASSIFICAÇÃO ──────────────────────────────── -->
     <section id="aba-classificacao" class="conteudo-aba">
-      <h2 class="titulo-secao">Classificação</h2>
-      <div class="filtro-grupo">
-        <label for="sel-grupo">Selecionar grupo:</label>
-        <select id="sel-grupo"></select>
-      </div>
-      <div id="tabela-classificacao"></div>
+      <h2 class="titulo-secao">Classificação por Grupo</h2>
+      <p class="subtitulo-secao">48 seleções · 12 grupos · 2 classificados + 8 melhores 3ºs avançam</p>
+      <div id="grade-classificacao" class="grade-classificacao"></div>
+      <p class="legenda" style="padding: 0 12px 16px">🟦 Os 2 primeiros de cada grupo se classificam</p>
     </section>
 
     <!-- ── ABA MATA-MATA ──────────────────────────────────── -->

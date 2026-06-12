@@ -77,10 +77,16 @@ function iniciarJogos() {
   datasOrdenadas = todasDatas;
 
   const idxHoje = todasDatas.findIndex(d => d >= hoje);
-  const inicio = Math.max(0, idxHoje);
+  const inicio  = Math.max(0, idxHoje);
 
   const container = document.getElementById('lista-jogos');
-  container.innerHTML = '';
+  container.innerHTML = '';          // limpa só lista-jogos; sentinel está fora
+
+  // Restaurar botão "Ver mais"
+  const sentinel = document.getElementById('sentinel');
+  const btnVer   = document.getElementById('btn-ver-mais');
+  if (sentinel) sentinel.style.display = 'flex';
+  if (btnVer)   { btnVer.disabled = false; btnVer.innerHTML = '<span class="seta">⬇</span> Ver mais jogos'; }
 
   // Carregar: hoje + próximos LOTE dias
   indiceFuturo = inicio;
@@ -96,17 +102,13 @@ function iniciarJogos() {
     btnAntes.onclick = () => mostrarPassados(datasPassadas, hoje);
   }
 
-  // Botão "Ver mais" + observer como fallback
-  const sentinel = document.getElementById('sentinel');
-  const btnVer   = document.getElementById('btn-ver-mais');
-  if (btnVer) {
-    btnVer.onclick = () => carregarMaisDias(container, hoje, LOTE);
-  }
+  // Botão "Ver mais" onclick + IntersectionObserver como fallback
+  if (btnVer) btnVer.onclick = () => carregarMaisDias(container, hoje, LOTE);
   if (observerScroll) observerScroll.disconnect();
   if (sentinel) {
     observerScroll = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && btnVer && !btnVer.disabled) btnVer.click();
-    }, { rootMargin: '100px' });
+    }, { rootMargin: '50px' });
     observerScroll.observe(sentinel);
   }
 }
@@ -114,7 +116,7 @@ function iniciarJogos() {
 function carregarMaisDias(container, hoje, quantidade) {
   const sentinel = document.getElementById('sentinel');
   const btnVer   = document.getElementById('btn-ver-mais');
-  let carregados = 0;
+  let carregados  = 0;
 
   if (btnVer) {
     btnVer.disabled = true;
@@ -124,7 +126,7 @@ function carregarMaisDias(container, hoje, quantidade) {
   while (indiceFuturo < datasOrdenadas.length && carregados < quantidade) {
     const data = datasOrdenadas[indiceFuturo];
     const jogosNoDia = JOGOS.filter(j => j.data === data);
-    container.insertBefore(renderDia(data, jogosNoDia, hoje), sentinel);
+    container.appendChild(renderDia(data, jogosNoDia, hoje)); // sentinel está fora
     indiceFuturo++;
     carregados++;
   }
@@ -173,27 +175,7 @@ function renderDia(data, jogos, hoje) {
   return bloco;
 }
 
-// ── Aba Grupos ────────────────────────────────────────────────────
-function renderGrupos() {
-  const grid = document.getElementById('grade-grupos');
-  grid.innerHTML = Object.entries(GRUPOS).map(([letra, times]) => `
-    <div class="card-grupo">
-      <div class="grupo-header">Grupo ${letra}</div>
-      <ul>
-        ${times.map(t => `<li>${bandeira(t)} ${t}</li>`).join('')}
-      </ul>
-    </div>
-  `).join('');
-}
-
 // ── Aba Classificação ─────────────────────────────────────────────
-function popularFiltroGrupo() {
-  const sel = document.getElementById('sel-grupo');
-  sel.innerHTML = Object.keys(GRUPOS).map(g =>
-    `<option value="${g}">Grupo ${g}</option>`
-  ).join('');
-}
-
 function calcularClassificacao(letra) {
   const times = GRUPOS[letra];
   const stats = {};
@@ -215,36 +197,35 @@ function calcularClassificacao(letra) {
 }
 
 function renderClassificacao() {
-  const letra = document.getElementById('sel-grupo').value;
-  const linhas = calcularClassificacao(letra);
-  document.getElementById('tabela-classificacao').innerHTML = `
-    <div class="tabela-scroll">
-      <table class="classificacao">
-        <thead>
-          <tr>
-            <th>#</th><th class="col-time">Time</th>
-            <th title="Jogos">J</th><th title="Vitórias">V</th>
-            <th title="Empates">E</th><th title="Derrotas">D</th>
-            <th title="Gols Pró">GP</th><th title="Gols Contra">GC</th>
-            <th title="Saldo de Gols">SG</th><th title="Pontos">Pts</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${linhas.map((r, i) => `
-            <tr class="${i < 2 ? 'classifica' : ''}">
-              <td>${i + 1}</td>
-              <td class="col-time">${bandeira(r.time)} ${r.time}</td>
-              <td>${r.j}</td><td>${r.v}</td><td>${r.e}</td><td>${r.d}</td>
-              <td>${r.gp}</td><td>${r.gc}</td>
-              <td>${r.sg > 0 ? '+' : ''}${r.sg}</td>
-              <td class="pts-col">${r.pts}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>
-    <p class="legenda">🟩 Os 2 primeiros se classificam para as oitavas</p>
-  `;
+  document.getElementById('grade-classificacao').innerHTML =
+    Object.keys(GRUPOS).map(letra => {
+      const linhas = calcularClassificacao(letra);
+      return `
+        <div class="card-classificacao">
+          <div class="grupo-header">Grupo ${letra}</div>
+          <table class="classificacao">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th class="col-time">Time</th>
+                <th title="Jogos">J</th>
+                <th title="Pontos">Pts</th>
+                <th title="Saldo de Gols">SG</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${linhas.map((r, i) => `
+                <tr class="${i < 2 ? 'classifica' : ''}">
+                  <td>${i + 1}</td>
+                  <td class="col-time">${bandeira(r.time)} ${r.time}</td>
+                  <td>${r.j}</td>
+                  <td class="pts-col">${r.pts}</td>
+                  <td class="${r.sg > 0 ? 'sg-pos' : r.sg < 0 ? 'sg-neg' : ''}">${r.sg > 0 ? '+' : ''}${r.sg}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    }).join('');
 }
 
 // ── Aba Mata-Mata ─────────────────────────────────────────────────
@@ -287,9 +268,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('msg-carregando')?.remove();
 
   iniciarJogos();
-  renderGrupos();
-  popularFiltroGrupo();
   renderClassificacao();
   renderMataMata();
-  document.getElementById('sel-grupo').addEventListener('change', renderClassificacao);
 });

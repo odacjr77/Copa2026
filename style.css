@@ -392,54 +392,49 @@ main { padding: 0 0 80px; }
 }
 .card-grupo li:last-child { border-bottom: none; }
 
-/* ── Aba Classificação ───────────────────────────────────────── */
-.filtro-grupo {
-  display: flex;
-  align-items: center;
+/* ── Aba Classificação — grid de grupos ──────────────────────── */
+.grade-classificacao {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  padding: 12px 16px;
-  font-size: 0.85rem;
-  color: var(--azul-palido);
+  padding: 8px 12px 16px;
 }
 
-.filtro-grupo select {
+.card-classificacao {
   background: var(--azul-card);
   border: 1px solid var(--azul-borda);
-  color: var(--texto);
-  padding: 6px 10px;
-  border-radius: var(--raio-sm);
-  font-size: 0.85rem;
+  border-radius: var(--raio);
+  overflow: hidden;
 }
-
-.tabela-scroll { overflow-x: auto; padding: 0 12px; }
 
 .classificacao {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.82rem;
-  min-width: 320px;
+  font-size: 0.8rem;
 }
 
 .classificacao th, .classificacao td {
-  padding: 9px 8px;
+  padding: 7px 6px;
   text-align: center;
   border-bottom: 1px solid var(--azul-borda);
   white-space: nowrap;
 }
 
 .classificacao th {
-  background: var(--azul-ativo);
+  background: rgba(21,101,192,0.35);
   color: var(--azul-palido);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.classificacao .col-time { text-align: left; min-width: 120px; }
-.classificacao td.col-time { font-weight: 600; font-size: 0.8rem; }
+.classificacao .col-time { text-align: left; }
+.classificacao td.col-time { font-weight: 600; font-size: 0.78rem; }
 .classificacao .pts-col { font-weight: 900; color: var(--azul-claro); }
-.classificacao tr.classifica td { background: rgba(21,101,192,0.12); }
-.classificacao tbody tr:active td { background: rgba(255,255,255,0.04); }
+.classificacao tr.classifica td { background: rgba(21,101,192,0.18); }
+.classificacao tbody tr:last-child td { border-bottom: none; }
+.sg-pos { color: #66bb6a; }
+.sg-neg { color: #ef5350; }
 
 .legenda {
   font-size: 0.75rem;
@@ -499,6 +494,12 @@ footer {
     gap: 12px;
   }
 
+  .grade-classificacao {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 10px 20px 16px;
+    gap: 12px;
+  }
+
   .card-jogo .card-rodape { flex-direction: row; justify-content: space-between; }
 }
 
@@ -511,6 +512,12 @@ footer {
   main { max-width: 900px; margin: 0 auto; }
 
   .grade-grupos {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    padding: 12px 0 24px;
+  }
+
+  .grade-classificacao {
     grid-template-columns: repeat(4, 1fr);
     gap: 14px;
     padding: 12px 0 24px;
