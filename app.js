@@ -284,7 +284,16 @@ async function carregarResultados() {
 }
 
 // ── Init ──────────────────────────────────────────────────────────
+let JOGOS = [];
+
 document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    JOGOS = await carregarJogos();
+  } catch (err) {
+    document.getElementById('lista-jogos').innerHTML =
+      `<p class="msg-carregando" style="color:#ef5350">Erro ao carregar jogos: ${err.message}</p>`;
+    return;
+  }
   await carregarResultados();
   iniciarJogos();
   renderClassificacao();
