@@ -25,7 +25,7 @@ body {
   background: var(--azul-escuro);
   color: var(--texto);
   min-height: 100vh;
-  font-size: 15px;
+  font-size: 16px;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -51,14 +51,14 @@ body {
 .trofeu { font-size: 2.2rem; }
 
 h1 {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 800;
   color: #fff;
   line-height: 1.2;
 }
 
 .subtitulo {
-  font-size: 0.75rem;
+  font-size: 0.82rem;
   color: var(--azul-palido);
   margin-top: 2px;
 }
@@ -75,11 +75,11 @@ h1 {
 
 .btn-aba {
   flex-shrink: 0;
-  padding: 10px 16px;
+  padding: 11px 18px;
   background: transparent;
   border: none;
   color: var(--azul-palido);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   border-bottom: 3px solid transparent;
@@ -138,7 +138,7 @@ main { padding: 0 0 80px; }
 }
 
 .data-label {
-  font-size: 0.92rem;
+  font-size: 0.96rem;
   font-weight: 700;
   color: var(--azul-claro);
   text-transform: uppercase;
@@ -180,7 +180,7 @@ main { padding: 0 0 80px; }
 }
 
 .fase-label {
-  font-size: 0.8rem;
+  font-size: 0.84rem;
   color: var(--azul-palido);
   font-weight: 600;
   text-transform: uppercase;
@@ -190,9 +190,9 @@ main { padding: 0 0 80px; }
 
 /* badges */
 .badge {
-  font-size: 0.68rem;
+  font-size: 0.74rem;
   font-weight: 800;
-  padding: 3px 8px;
+  padding: 3px 9px;
   border-radius: 20px;
   letter-spacing: 0.5px;
   white-space: nowrap;
@@ -220,7 +220,7 @@ main { padding: 0 0 80px; }
 .bandeira { font-size: 2.4rem; line-height: 1; }
 
 .nome-time {
-  font-size: 0.92rem;
+  font-size: 0.96rem;
   font-weight: 700;
   text-align: center;
   color: #fff;
@@ -262,7 +262,7 @@ main { padding: 0 0 80px; }
 }
 
 .hora-jogo {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 800;
   color: var(--azul-claro);
 }
@@ -283,7 +283,7 @@ main { padding: 0 0 80px; }
 }
 
 .info-local, .info-data {
-  font-size: 0.8rem;
+  font-size: 0.84rem;
   color: var(--cinza);
   white-space: nowrap;
   overflow: hidden;
@@ -373,8 +373,8 @@ main { padding: 0 0 80px; }
 
 .grupo-header {
   background: var(--azul-ativo);
-  padding: 8px 12px;
-  font-size: 0.85rem;
+  padding: 10px 14px;
+  font-size: 1rem;
   font-weight: 800;
   color: #fff;
   letter-spacing: 0.5px;
@@ -395,8 +395,8 @@ main { padding: 0 0 80px; }
 /* ── Aba Classificação — grid de grupos ──────────────────────── */
 .grade-classificacao {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  grid-template-columns: 1fr;
+  gap: 12px;
   padding: 8px 12px 16px;
 }
 
@@ -410,11 +410,11 @@ main { padding: 0 0 80px; }
 .classificacao {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.8rem;
+  font-size: 0.97rem;
 }
 
 .classificacao th, .classificacao td {
-  padding: 7px 6px;
+  padding: 10px 8px;
   text-align: center;
   border-bottom: 1px solid var(--azul-borda);
   white-space: nowrap;
@@ -423,13 +423,13 @@ main { padding: 0 0 80px; }
 .classificacao th {
   background: rgba(21,101,192,0.35);
   color: var(--azul-palido);
-  font-size: 0.7rem;
+  font-size: 0.82rem;
   font-weight: 700;
   text-transform: uppercase;
 }
 
 .classificacao .col-time { text-align: left; }
-.classificacao td.col-time { font-weight: 600; font-size: 0.78rem; }
+.classificacao td.col-time { font-weight: 600; font-size: 0.95rem; }
 .classificacao .pts-col { font-weight: 900; color: var(--azul-claro); }
 .classificacao tr.classifica td { background: rgba(21,101,192,0.18); }
 .classificacao tbody tr:last-child td { border-bottom: none; }
@@ -476,23 +476,23 @@ footer {
 
 /* ── Tablet: 600px+ ──────────────────────────────────────────── */
 @media (min-width: 600px) {
-  body { font-size: 16px; }
+  body { font-size: 17px; }
 
   .topo-inner { padding: 16px 24px 10px; }
   .trofeu { font-size: 2.6rem; }
-  h1 { font-size: 1.5rem; }
-  .subtitulo { font-size: 0.85rem; }
+  h1 { font-size: 1.55rem; }
+  .subtitulo { font-size: 0.88rem; }
 
-  .btn-aba { padding: 12px 22px; font-size: 0.9rem; }
+  .btn-aba { padding: 12px 24px; font-size: 0.95rem; }
 
   .cabecalho-dia { top: 106px; padding: 10px 24px; }
-  .data-label { font-size: 0.88rem; }
+  .data-label { font-size: 0.96rem; }
 
   .card-jogo { margin: 8px 20px; padding: 14px 18px; }
 
-  .nome-time { font-size: 0.88rem; }
-  .bandeira  { font-size: 2.2rem; }
-  .gol       { font-size: 1.6rem; }
+  .nome-time { font-size: 0.96rem; }
+  .bandeira  { font-size: 2.4rem; }
+  .gol       { font-size: 1.7rem; }
 
   .grade-grupos {
     grid-template-columns: repeat(3, 1fr);
@@ -501,7 +501,7 @@ footer {
   }
 
   .grade-classificacao {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     padding: 10px 20px 16px;
     gap: 12px;
   }
@@ -524,7 +524,7 @@ footer {
   }
 
   .grade-classificacao {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 14px;
     padding: 12px 0 24px;
   }
