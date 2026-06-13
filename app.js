@@ -229,19 +229,116 @@ function renderClassificacao() {
 }
 
 // ── Aba Mata-Mata ─────────────────────────────────────────────────
-function renderMataMata() {
-  const fases = ['16 avos de final', 'Oitavas de final', 'Quartas de final', 'Semifinal', 'Disputa de 3º lugar', 'Final'];
-  const hoje = hojeEmBRT();
-  document.getElementById('bracket').innerHTML = fases.map(fase => {
-    const jogos = JOGOS.filter(j => j.fase === fase);
+function parseCSVSimples(text) {
+  const rows = [];
+  let col = '', row = [], inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"' && text[i + 1] === '"') { col += '"'; i++; }
+      else if (c === '"') inQ = false;
+      else col += c;
+    } else if (c === '"') {
+      inQ = true;
+    } else if (c === ',') {
+      row.push(col); col = '';
+    } else if (c === '\n') {
+      row.push(col); rows.push(row); col = ''; row = [];
+    } else if (c !== '\r') {
+      col += c;
+    }
+  }
+  if (col || row.length) { row.push(col); rows.push(row); }
+  return rows;
+}
+
+function cardMataMata(j) {
+  function candidato(time, pct, isLider) {
     return `
+      <div class="mm-candidato${isLider ? ' lider' : ''}">
+        <div class="mm-cand-topo">
+          <span class="mm-bandeira">${bandeira(time)}</span>
+          <span class="mm-nome">${time}</span>
+          <span class="mm-pct">${pct}%</span>
+        </div>
+        <div class="mm-barra-wrap">
+          <div class="mm-barra" style="width:${pct}%"></div>
+        </div>
+      </div>`;
+  }
+  return `
+    <div class="card-mm">
+      <div class="mm-meta">
+        ${j.data ? `<span>📅 ${j.data}</span>` : ''}
+        ${j.hora ? `<span>🕐 ${j.hora} BRT</span>` : ''}
+        ${j.local ? `<span>📍 ${j.local}</span>` : ''}
+      </div>
+      <div class="mm-jogo">
+        <div class="mm-vaga">
+          ${candidato(j.t1c1, j.p1, j.p1 >= j.p2)}
+          ${candidato(j.t1c2, j.p2, j.p2 > j.p1)}
+        </div>
+        <div class="mm-vs">VS</div>
+        <div class="mm-vaga">
+          ${candidato(j.t2c1, j.p3, j.p3 >= j.p4)}
+          ${candidato(j.t2c2, j.p4, j.p4 > j.p3)}
+        </div>
+      </div>
+    </div>`;
+}
+
+async function renderMataMata() {
+  const container = document.getElementById('bracket');
+  container.innerHTML = '<p class="msg-carregando"><span class="loading-dots"><span></span><span></span><span></span></span> Carregando previsões...</p>';
+
+  let jogos = [];
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=MataMata`;
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const text = await resp.text();
+    const rows = parseCSVSimples(text);
+    jogos = rows.slice(1)
+      .filter(r => r[12] && r[12].trim())
+      .map(r => ({
+        data:  r[0]?.trim() || '',
+        hora:  r[1]?.trim() || '',
+        local: r[2]?.trim() || '',
+        t1c1:  r[3]?.trim() || '',
+        p1:    parseInt(r[4]) || 0,
+        t1c2:  r[5]?.trim() || '',
+        p2:    parseInt(r[6]) || 0,
+        t2c1:  r[7]?.trim() || '',
+        p3:    parseInt(r[8]) || 0,
+        t2c2:  r[9]?.trim() || '',
+        p4:    parseInt(r[10]) || 0,
+        fase:  r[12]?.trim() || '',
+      }));
+  } catch (e) {
+    container.innerHTML = '<p class="msg-carregando" style="color:#ef5350">Erro ao carregar previsões.</p>';
+    return;
+  }
+
+  const comPrevisao = jogos.filter(j => j.t1c1);
+  if (!comPrevisao.length) {
+    container.innerHTML = '<p class="msg-carregando">Previsões ainda não disponíveis.</p>';
+    return;
+  }
+
+  const ordem = ['16 avos de final', 'Oitavas de final', 'Quartas de final', 'Semifinal', 'Disputa de 3º lugar', 'Final'];
+  const porFase = {};
+  comPrevisao.forEach(j => { (porFase[j.fase] = porFase[j.fase] || []).push(j); });
+
+  container.innerHTML = ordem
+    .filter(f => porFase[f]?.length)
+    .map(fase => `
       <div class="fase-ko">
         <h3 class="titulo-fase">${fase}</h3>
         <div class="jogos-fase">
-          ${jogos.map(j => cardJogo(j, hoje)).join('')}
+          ${porFase[fase].map(j => cardMataMata(j)).join('')}
         </div>
-      </div>`;
-  }).join('');
+      </div>`)
+    .join('');
 }
 
 // ── Navegação por abas ────────────────────────────────────────────

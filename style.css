@@ -459,6 +459,110 @@ main { padding: 0 0 80px; }
 
 .jogos-fase { padding: 0; }
 
+/* Cards de candidatos mata-mata */
+.card-mm {
+  margin: 8px 12px;
+  background: var(--azul-card);
+  border: 1px solid var(--azul-borda);
+  border-radius: var(--raio);
+  overflow: hidden;
+}
+
+.mm-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 7px 12px;
+  background: rgba(0,0,0,0.2);
+  font-size: 0.72rem;
+  color: var(--cinza);
+  border-bottom: 1px solid var(--azul-borda);
+}
+
+.mm-jogo {
+  display: flex;
+  align-items: stretch;
+  padding: 10px 12px;
+  gap: 0;
+}
+
+.mm-vaga {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.mm-vs {
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--cinza);
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.mm-candidato {
+  padding: 6px 8px;
+  border-radius: var(--raio-sm);
+  border: 1px solid var(--azul-borda);
+  background: rgba(255,255,255,0.02);
+}
+
+.mm-candidato.lider {
+  border-color: rgba(249,168,37,0.5);
+  background: rgba(249,168,37,0.05);
+}
+
+.mm-cand-topo {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.mm-bandeira { font-size: 1.3rem; line-height: 1; flex-shrink: 0; }
+
+.mm-nome {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mm-pct {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--azul-claro);
+  flex-shrink: 0;
+}
+
+.mm-candidato.lider .mm-pct { color: var(--amarelo); }
+
+.mm-barra-wrap {
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.mm-barra {
+  height: 100%;
+  background: var(--azul-ativo);
+  border-radius: 2px;
+  max-width: 100%;
+}
+
+.mm-candidato.lider .mm-barra { background: var(--amarelo); }
+
 /* ── Footer ──────────────────────────────────────────────────── */
 footer {
   text-align: center;
