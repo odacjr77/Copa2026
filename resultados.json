@@ -1,6 +1,27 @@
 {
-  "_atualizado": "2026-06-11T23:59:00Z",
-  "Estados Unidos|Panamá": { "casa": 2, "fora": 0 },
-  "Argentina|Costa Rica": { "casa": 3, "fora": 0 },
-  "Brasil|Camarões": { "casa": 4, "fora": 1 }
+  "Estados Unidos|Panamá": {
+    "casa": 2,
+    "fora": 0
+  },
+  "Argentina|Costa Rica": {
+    "casa": 3,
+    "fora": 0
+  },
+  "Brasil|Camarões": {
+    "casa": 4,
+    "fora": 1
+  },
+  "Canadá|Bosnia-Herzegovina": {
+    "casa": 1,
+    "fora": 1
+  },
+  "México|África do Sul": {
+    "casa": 2,
+    "fora": 0
+  },
+  "Coreia do Sul|Czechia": {
+    "casa": 2,
+    "fora": 1
+  },
+  "_atualizado": "2026-06-13T00:04:48Z"
 }
