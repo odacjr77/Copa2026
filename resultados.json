@@ -31,5 +31,13 @@
     "casa": 1,
     "fora": 1
   },
-  "_atualizado": "2026-06-14T00:08:55Z"
+  "Brasil|Marrocos": {
+    "casa": 1,
+    "fora": 1
+  },
+  "Haiti|Escócia": {
+    "casa": 0,
+    "fora": 1
+  },
+  "_atualizado": "2026-06-14T05:12:08Z"
 }
