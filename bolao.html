@@ -191,6 +191,20 @@
       display: block;
     }
 
+    /* emoji marker riding the bar */
+    .emoji-marcador {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 2px solid var(--face-cor, #fff);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+      animation: pulo 0.35s ease-in-out infinite alternate;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      line-height: 1;
+    }
+
     .p-score {
       width: 32px;
       text-align: right;
@@ -393,9 +407,27 @@
     '#9e9e9e','#795548','#009688','#3f51b5','#cddc39',
   ];
 
-  // Fotos dos jogadores (usadas no lugar do cavalinho padrão)
-  const FOTOS_JOGADORES = {
-    'Aloisio': 'Referencias/Aloisio.jpeg',
+  // Ícones dos jogadores (emoji ou caminho de imagem)
+  const ICONES_JOGADORES = {
+    'Juarez':        '🪶',    // pena de índio
+    'Vitor':         '😆',    // Beavis
+    'Odair':         '😎',    // óculos escuro
+    'João Felipe':   '🤨',    // Butt-Head
+    'Coração':       '🤥',    // Pinóquio (nariz longo)
+    'Barretos':      '🤠',    // chapéu de cowboy
+    'Bixiga':        '🎈',    // bexiga
+    'Pileggi':       '🐴',    // cavalo
+    'Fabio':         '😭',    // homem careca gordinho chorando
+    'Aloisio':       '🦆',    // pato
+    'Leandro':       '🦀',    // siri
+    'Tuk':           '🔪',    // Chucky boneco assassino
+    'Rafa':          '🏴',    // bandeira (RS — sem emoji oficial de estado)
+    'Bryan':         '🐶',    // Brian (Family Guy)
+    'Bob':           '🧽',    // Bob Esponja
+    'Irineu':        '🌺',    // camisa florida
+    'Pedro':         '🐕',    // cachorro
+    'Julia':         '🐕',    // cachorra
+    'Isa e Heleana': '🐕🐕',  // 2 cachorros juntos
   };
 
   // ── Estado global ────────────────────────────────────────
@@ -548,13 +580,19 @@
       lane.id        = `lane-${i}`;
       lane.style.top = `${i * ROW_H}px`;
 
-      const foto = FOTOS_JOGADORES[p.name];
-      const badgeHTML   = foto
-        ? `<img src="${foto}" alt="${p.name}">`
-        : horseSVG(p.color, 20);
-      const marcadorHTML = foto
-        ? `<div class="face-wrap" style="--face-cor:${p.color}"><img src="${foto}" alt="${p.name}"></div>`
-        : `<div class="horse-svg-wrap">${horseSVG(p.color, 30)}</div>`;
+      const icone   = ICONES_JOGADORES[p.name];
+      const isEmoji = icone && !icone.includes('/');
+      let badgeHTML, marcadorHTML;
+      if (icone && isEmoji) {
+        badgeHTML    = `<span style="font-size:17px;line-height:1">${icone}</span>`;
+        marcadorHTML = `<div class="emoji-marcador" style="--face-cor:${p.color}">${icone}</div>`;
+      } else if (icone) {
+        badgeHTML    = `<img src="${icone}" alt="${p.name}">`;
+        marcadorHTML = `<div class="face-wrap" style="--face-cor:${p.color}"><img src="${icone}" alt="${p.name}"></div>`;
+      } else {
+        badgeHTML    = horseSVG(p.color, 20);
+        marcadorHTML = `<div class="horse-svg-wrap">${horseSVG(p.color, 30)}</div>`;
+      }
 
       lane.innerHTML = `
         <div class="p-rank" id="rank-${i}">—</div>
