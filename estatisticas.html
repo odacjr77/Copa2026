@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d1b2e">
+  <title>Estatísticas Toscas · Copa 2026</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .stats-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px 12px 60px;
+    }
+
+    .estado-central {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 60px 20px;
+      color: #546e7a;
+      font-size: 0.9rem;
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid #1e3a5f;
+      border-top-color: #1565c0;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .bolao-btn {
+      padding: 10px 20px;
+      background: #1565c0;
+      border: 1px solid #1976d2;
+      color: #fff;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* page banner */
+    .page-banner {
+      text-align: center;
+      padding: 16px 12px;
+      background: #131929;
+      border: 1px solid #1e3a5f;
+      border-radius: 14px;
+      margin-bottom: 20px;
+    }
+    .page-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #64b5f6;
+      margin: 0; padding: 0; border: none;
+    }
+    .page-sub {
+      color: #78909c;
+      font-size: 0.82rem;
+      margin-top: 5px;
+    }
+
+    /* trophy card */
+    .trophy-card {
+      background: #131929;
+      border: 1px solid #1e3a5f;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .trophy-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 14px 14px 0 0;
+    }
+    .trophy-card.jagger::before  { background: linear-gradient(90deg, #ff8f00, #ef5350); }
+    .trophy-card.estranho::before { background: linear-gradient(90deg, #7b1fa2, #42a5f5); }
+    .trophy-card.zebra::before    { background: linear-gradient(90deg, #2e7d32, #66bb6a); }
+
+    .trophy-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+    .trophy-icon-big { font-size: 2.4rem; line-height: 1; }
+    .trophy-meta { flex: 1; }
+    .trophy-name {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin: 0;
+    }
+    .jagger  .trophy-name { color: #ff8f00; }
+    .estranho .trophy-name { color: #ce93d8; }
+    .zebra   .trophy-name { color: #66bb6a; }
+
+    .trophy-tag {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 2px 8px;
+      background: #1e3a5f;
+      border-radius: 20px;
+      font-size: 0.66rem;
+      color: #546e7a;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .trophy-desc {
+      font-size: 0.82rem;
+      color: #78909c;
+      margin: 0 0 16px;
+      line-height: 1.6;
+      padding-left: 10px;
+      border-left: 3px solid #1e3a5f;
+    }
+
+    /* podium */
+    .podium { display: flex; flex-direction: column; gap: 8px; }
+
+    .podium-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid #1e3a5f;
+    }
+    .podium-row.ouro   { background: rgba(255,215,0,0.05);  border-color: rgba(255,215,0,0.25); }
+    .podium-row.prata  { background: rgba(192,192,192,0.04); border-color: rgba(192,192,192,0.2); }
+    .podium-row.bronze { background: rgba(205,127,50,0.04); border-color: rgba(205,127,50,0.2); }
+
+    .podium-medal { font-size: 1.3rem; width: 26px; text-align: center; flex-shrink: 0; }
+    .podium-icon  { font-size: 1.5rem; width: 30px; text-align: center; flex-shrink: 0; }
+    .podium-name  { flex: 1; font-weight: 700; font-size: 0.88rem; }
+    .podium-info  {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .podium-value {
+      display: block;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #90caf9;
+    }
+    .podium-label {
+      display: block;
+      font-size: 0.68rem;
+      color: #546e7a;
+      margin-top: 1px;
+    }
+
+    .sem-dados {
+      color: #37474f;
+      font-size: 0.82rem;
+      padding: 8px 4px;
+      font-style: italic;
+    }
+
+    .fonte-dados {
+      text-align: center;
+      font-size: 0.7rem;
+      color: #37474f;
+      margin-top: 10px;
+    }
+
+    @media (min-width: 600px) {
+      .stats-wrap { padding: 20px 24px 60px; }
+      .page-title { font-size: 1.7rem; }
+    }
+    @media (min-width: 900px) {
+      .stats-wrap { padding: 24px 0 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topo">
+    <div class="topo-inner">
+      <div class="topo-logo">
+        <span class="trofeu">🏆</span>
+        <div>
+          <h1>Copa do Mundo 2026</h1>
+          <p class="subtitulo">EUA · Canadá · México &nbsp;|&nbsp; 11 jun – 19 jul</p>
+        </div>
+      </div>
+    </div>
+    <nav class="abas-nav">
+      <button class="btn-aba" onclick="location.href='index.html'">⚽ Jogos</button>
+      <button class="btn-aba" onclick="location.href='index.html'">📊 Grupos</button>
+      <button class="btn-aba" onclick="location.href='index.html'">🏅 Mata-Mata</button>
+      <button class="btn-aba" onclick="location.href='bolao.html'">🏇 Bolão</button>
+      <button class="btn-aba ativa">🤪 Toscas</button>
+    </nav>
+  </header>
+
+  <main>
+    <div class="stats-wrap">
+
+      <div id="stateLoading" class="estado-central">
+        <div class="spinner"></div>
+        <p>Calculando estatísticas toscas...</p>
+      </div>
+
+      <div id="stateError" class="estado-central" style="display:none">
+        <span style="font-size:2rem">⚠️</span>
+        <p id="errorMsg">Não foi possível carregar os dados.</p>
+        <button class="bolao-btn" onclick="init()">Tentar novamente</button>
+      </div>
+
+      <div id="stateMain" style="display:none">
+
+        <div class="page-banner">
+          <h2 class="page-title">🤪 Estatísticas Toscas</h2>
+          <p class="page-sub">Os prêmios que ninguém quer ganhar — mas todo mundo merece</p>
+        </div>
+
+        <!-- Troféu Mick Jagger -->
+        <div class="trophy-card jagger">
+          <div class="trophy-header">
+            <span class="trophy-icon-big">🎸</span>
+            <div class="trophy-meta">
+              <p class="trophy-name">Troféu Mick Jagger</p>
+              <span class="trophy-tag">AZARADO DA VEZ</span>
+            </div>
+          </div>
+          <p class="trophy-desc">
+            Toda vez que aposta em uma grande vitória... o time perde ou empata.
+            Este participante pontuou <strong>zero</strong> justamente nas rodadas em que todo mundo foi bem.
+          </p>
+          <div class="podium" id="podiumJagger"></div>
+        </div>
+
+        <!-- Prêmio Doutor Estranho -->
+        <div class="trophy-card estranho">
+          <div class="trophy-header">
+            <span class="trophy-icon-big">🪄</span>
+            <div class="trophy-meta">
+              <p class="trophy-name">Prêmio Doutor Estranho</p>
+              <span class="trophy-tag">GÊNIO FORA DO TEMPO</span>
+            </div>
+          </div>
+          <p class="trophy-desc">
+            Cravou um placar bizarro que ninguém imaginava — mas errou absolutamente todos os jogos fáceis.
+            É alguém que <strong>voa alto em alguns momentos</strong> e some nos outros.
+          </p>
+          <div class="podium" id="podiumEstranho"></div>
+        </div>
+
+        <!-- Prêmio Zebra-Man -->
+        <div class="trophy-card zebra">
+          <div class="trophy-header">
+            <span class="trophy-icon-big">🦓</span>
+            <div class="trophy-meta">
+              <p class="trophy-name">Prêmio Zebra-Man</p>
+              <span class="trophy-tag">VIDENTE DAS ZEBRAS</span>
+            </div>
+          </div>
+          <p class="trophy-desc">
+            Vive acertando nas zebras. Enquanto todo mundo apostava no favorito, esse cara já sabia o que ia acontecer.
+            Pontuou <strong>acima da média justamente quando a rodada estava difícil</strong> pra todo mundo.
+          </p>
+          <div class="podium" id="podiumZebra"></div>
+        </div>
+
+        <p class="fonte-dados">
+          Dados: <a href="https://docs.google.com/spreadsheets/d/15doR2R2qaBXsiH-xrekydCPEsldxUKvg99EYAOiblyU"
+                    target="_blank" rel="noopener" style="color:#37474f">Google Sheets · aba bolao</a>
+          &nbsp;·&nbsp; As estatísticas ficam mais precisas com o avançar das rodadas.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <p>Copa do Mundo FIFA 2026 · Horários em BRT (Brasília, UTC-3)</p>
+  </footer>
+
+  <script>
+  const SHEET_ID = '15doR2R2qaBXsiH-xrekydCPEsldxUKvg99EYAOiblyU';
+
+  const ICONES_JOGADORES = {
+    'Juarez':        '📯',
+    'Vitor':         '😆',
+    'Odair':         '😎',
+    'João Felipe':   '🤨',
+    'Coração':       '🤥',
+    'Barretos':      '🤠',
+    'Bixiga':        '🎈',
+    'Pileggi':       '🐴',
+    'Fabio':         '😭',
+    'Aloisio':       '🦆',
+    'Leandro':       '🦀',
+    'Tuk':           '🔪',
+    'Rafa':          '🎸',
+    'Bryan':         '🥸',
+    'Brian':         '🥸',
+    'Bob':           '🧽',
+    'Irineu':        '🌺',
+    'Pedro':         '👳',
+    'Julia':         '💃',
+    'Isa e Heleana': '👧',
+    'Isa e Helena':  '👧',
+  };
+
+  const CORES_JOGADORES = {
+    'Vitor':'#ef5350','Juarez':'#ff8f00','João Felipe':'#fdd835',
+    'Leandro':'#66bb6a','Bixiga':'#26c6da','Odair':'#42a5f5',
+    'Aloisio':'#ab47bc','Tuk':'#f06292','Pileggi':'#ff7043',
+    'Barretos':'#8d6e63','Rafa':'#78909c','Coração':'#e53935',
+    'Irineu':'#43a047','Fabio':'#1e88e5','Bob':'#8e24aa',
+    'Bryan':'#ffb300','Pedro':'#00897b',
+  };
+  const CORES_AUTO = ['#e91e63','#00bcd4','#8bc34a','#ff5722','#607d8b',
+                      '#9e9e9e','#795548','#009688','#3f51b5','#cddc39'];
+  const _colorCache = {};
+  let _autoIdx = 0;
+  function playerColor(name) {
+    if (CORES_JOGADORES[name]) return CORES_JOGADORES[name];
+    if (!_colorCache[name]) _colorCache[name] = CORES_AUTO[_autoIdx++ % CORES_AUTO.length];
+    return _colorCache[name];
+  }
+
+  // ── CSV parser ──────────────────────────────────────────
+  function parseCSV(text) {
+    return text.trim().split(/\r?\n/).map(line => {
+      const cols = [];
+      let field = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') {
+          if (inQ && line[i + 1] === '"') { field += '"'; i++; }
+          else inQ = !inQ;
+        } else if (c === ',' && !inQ) {
+          cols.push(field); field = '';
+        } else {
+          field += c;
+        }
+      }
+      cols.push(field);
+      return cols;
+    });
+  }
+
+  // ── Carrega jogadores e pontos por rodada ───────────────
+  async function loadPlayers() {
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=bolao`;
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const text = await resp.text();
+    const rows = parseCSV(text);
+
+    const dataRows = rows.slice(3).filter(r => r[0] && r[0].trim() && r[0].trim() !== 'Jogador');
+
+    return dataRows.map(row => {
+      const name = row[0].replace(/[\[\]]/g, '').trim();
+
+      const cumulative = [];
+      for (let r = 1; r <= 20; r++) {
+        const col = r * 2;
+        if (col < row.length && row[col] !== '') {
+          cumulative.push(parseInt(row[col]) || 0);
+        }
+      }
+
+      // Pontos de cada rodada individual (delta entre cumulativos)
+      const roundScores = cumulative.map((c, i) => i === 0 ? c : c - cumulative[i - 1]);
+
+      return { name, cumulative, roundScores };
+    }).filter(p => p.roundScores.length > 0);
+  }
+
+  // ── Troféu Mick Jagger ──────────────────────────────────
+  // Mais zeros em rodadas onde a média geral foi alta
+  function calcMickJagger(players) {
+    const numRounds = Math.max(...players.map(p => p.roundScores.length));
+    if (numRounds < 1) return [];
+
+    const roundAvgs = Array.from({ length: numRounds }, (_, r) => {
+      const vals = players.map(p => p.roundScores[r] ?? 0);
+      return vals.reduce((a, b) => a + b, 0) / vals.length;
+    });
+
+    const globalAvg = roundAvgs.reduce((a, b) => a + b, 0) / numRounds;
+
+    return players
+      .map(p => {
+        const highRoundsTotal = roundAvgs.filter(a => a > globalAvg).length;
+        const jaggedRounds = p.roundScores.filter((s, i) =>
+          s === 0 && roundAvgs[i] > globalAvg
+        ).length;
+        const pct = highRoundsTotal > 0 ? (jaggedRounds / highRoundsTotal) * 100 : 0;
+        return { ...p, jaggedRounds, pct, highRoundsTotal };
+      })
+      .sort((a, b) => b.pct - a.pct || b.jaggedRounds - a.jaggedRounds)
+      .slice(0, 3)
+      .map(p => ({
+        name:  p.name,
+        value: `${p.jaggedRounds} vez${p.jaggedRounds !== 1 ? 'es' : ''}`,
+        label: `zerou quando o grupo foi bem`,
+      }));
+  }
+
+  // ── Prêmio Doutor Estranho ──────────────────────────────
+  // Maior variação relativa de pontos (coeficiente de variação)
+  // = picos altos + zeros frequentes
+  function calcDoutorEstranho(players) {
+    return players
+      .filter(p => p.roundScores.length >= 2)
+      .map(p => {
+        const s = p.roundScores;
+        const mean   = s.reduce((a, b) => a + b, 0) / s.length;
+        const stdDev = Math.sqrt(s.reduce((acc, v) => acc + (v - mean) ** 2, 0) / s.length);
+        const cv     = mean > 0 ? stdDev / mean : 0;
+        const peak   = Math.max(...s);
+        const zeros  = s.filter(v => v === 0).length;
+        return { ...p, cv, mean, peak, zeros };
+      })
+      .sort((a, b) => b.cv - a.cv)
+      .slice(0, 3)
+      .map(p => ({
+        name:  p.name,
+        value: `pico ${p.peak} pts`,
+        label: `${p.zeros} rodada${p.zeros !== 1 ? 's' : ''} zerada${p.zeros !== 1 ? 's' : ''} · variância ${(p.cv * 100).toFixed(0)}%`,
+      }));
+  }
+
+  // ── Prêmio Zebra-Man ────────────────────────────────────
+  // Mais pontos acumulados especificamente nas rodadas difíceis
+  // (rodadas em que a média do grupo ficou abaixo da média geral)
+  function calcZebraMan(players) {
+    const numRounds = Math.max(...players.map(p => p.roundScores.length));
+    if (numRounds < 1) return [];
+
+    const roundAvgs = Array.from({ length: numRounds }, (_, r) => {
+      const vals = players.map(p => p.roundScores[r] ?? 0);
+      return vals.reduce((a, b) => a + b, 0) / vals.length;
+    });
+
+    const globalAvg = roundAvgs.reduce((a, b) => a + b, 0) / numRounds;
+
+    return players
+      .map(p => {
+        let zebraPoints = 0, zebraRounds = 0;
+        p.roundScores.forEach((s, i) => {
+          if (roundAvgs[i] < globalAvg && s > roundAvgs[i]) {
+            zebraPoints += s;
+            zebraRounds++;
+          }
+        });
+        return { ...p, zebraPoints, zebraRounds };
+      })
+      .sort((a, b) => b.zebraPoints - a.zebraPoints || b.zebraRounds - a.zebraRounds)
+      .slice(0, 3)
+      .map(p => ({
+        name:  p.name,
+        value: `+${p.zebraPoints} pts`,
+        label: `em ${p.zebraRounds} rodada${p.zebraRounds !== 1 ? 's' : ''} difícil${p.zebraRounds !== 1 ? 'eis' : ''}`,
+      }));
+  }
+
+  // ── Renderiza pódio ─────────────────────────────────────
+  const MEDALS      = ['🥇', '🥈', '🥉'];
+  const MEDAL_CLASS = ['ouro', 'prata', 'bronze'];
+
+  function renderPodium(id, ranking) {
+    const el = document.getElementById(id);
+    if (!ranking.length) {
+      el.innerHTML = '<p class="sem-dados">Dados insuficientes — volte após mais rodadas disputadas.</p>';
+      return;
+    }
+    el.innerHTML = ranking.map((p, i) => `
+      <div class="podium-row ${MEDAL_CLASS[i]}">
+        <span class="podium-medal">${MEDALS[i]}</span>
+        <span class="podium-icon">${ICONES_JOGADORES[p.name] || '❓'}</span>
+        <span class="podium-name" style="color:${playerColor(p.name)}">${p.name}</span>
+        <span class="podium-info">
+          <strong class="podium-value">${p.value}</strong>
+          <span class="podium-label">${p.label}</span>
+        </span>
+      </div>
+    `).join('');
+  }
+
+  // ── Init ────────────────────────────────────────────────
+  async function init() {
+    const elLoad = document.getElementById('stateLoading');
+    const elErr  = document.getElementById('stateError');
+    const elMain = document.getElementById('stateMain');
+
+    elLoad.style.display = 'flex';
+    elErr.style.display  = 'none';
+    elMain.style.display = 'none';
+
+    try {
+      const players = await loadPlayers();
+      renderPodium('podiumJagger',  calcMickJagger(players));
+      renderPodium('podiumEstranho', calcDoutorEstranho(players));
+      renderPodium('podiumZebra',   calcZebraMan(players));
+
+      elLoad.style.display = 'none';
+      elMain.style.display = 'block';
+    } catch (err) {
+      console.error('[Toscas]', err);
+      elLoad.style.display = 'none';
+      elErr.style.display  = 'flex';
+      document.getElementById('errorMsg').textContent =
+        `Erro ao carregar dados. (${err.message})`;
+    }
+  }
+
+  window.addEventListener('load', init);
+  </script>
+
+</body>
+</html>
