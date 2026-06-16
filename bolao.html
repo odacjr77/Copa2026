@@ -377,7 +377,7 @@
   <script>
   // ── Configuração ─────────────────────────────────────────
   const SHEET_ID      = '15doR2R2qaBXsiH-xrekydCPEsldxUKvg99EYAOiblyU';
-  const ANIM_TOTAL_MS = 15000;   // duração total da animação
+  const ANIM_TOTAL_MS = 20000;   // duração total da animação
   const CSS_TRANS_MS  = 1400;    // duração da transição CSS (largura da barra)
   const ROW_H         = 52;      // altura de cada linha (px) — mobile
   const ROW_H_LARGE   = 52;
@@ -467,7 +467,7 @@
     const rows = parseCSV(text);
 
     // Linhas: 0=cabeçalho de rodadas, 1=rótulos subtotal, 2="Jogador", 3+=dados
-    const dataRows = rows.slice(3).filter(r => r[0] && r[0].trim());
+    const dataRows = rows.slice(3).filter(r => r[0] && r[0].trim() && r[0].trim() !== 'Jogador');
 
     let autoColorIdx = 0;
     const playerData = dataRows.map(row => {
