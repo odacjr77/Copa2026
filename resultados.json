@@ -127,5 +127,13 @@
     "casa": 2,
     "fora": 0
   },
-  "_atualizado": "2026-06-19T23:46:20Z"
+  "Escócia|Marrocos": {
+    "casa": 0,
+    "fora": 1
+  },
+  "Brasil|Haiti": {
+    "casa": 3,
+    "fora": 0
+  },
+  "_atualizado": "2026-06-20T03:51:49Z"
 }
