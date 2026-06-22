@@ -349,43 +349,6 @@ function mostrarAba(nome, btn) {
   btn.classList.add('ativa');
 }
 
-// ── Carrega resultados do resultados.json (atualizado pela Action) ─
-async function carregarResultados() {
-  try {
-    // Cache-bust a cada 5 minutos para garantir dados frescos
-    const v = Math.floor(Date.now() / (5 * 60 * 1000));
-    const resp = await fetch(`resultados.json?v=${v}`);
-    if (!resp.ok) return;
-    const res = await resp.json();
-
-    // Aplica placares sobre JOGOS (sobrescreve dados de data.js)
-    JOGOS.forEach(j => {
-      const chave    = `${j.casa}|${j.fora}`;
-      const chaveRev = `${j.fora}|${j.casa}`;
-      if (res[chave] !== undefined) {
-        j.placar = res[chave];
-      } else if (res[chaveRev] !== undefined) {
-        // aceita ordem invertida — troca casa/fora nos gols
-        j.placar = { casa: res[chaveRev].fora, fora: res[chaveRev].casa };
-      }
-    });
-
-    // Exibe timestamp da última atualização
-    if (res._atualizado) {
-      const dt = new Date(res._atualizado);
-      const label = dt.toLocaleString('pt-BR', {
-        timeZone: 'America/Sao_Paulo',
-        day: '2-digit', month: '2-digit',
-        hour: '2-digit', minute: '2-digit',
-      });
-      const el = document.getElementById('ultima-atualizacao');
-      if (el) el.textContent = `Atualizado: ${label} BRT`;
-    }
-  } catch (_) {
-    // Sem rede ou arquivo ausente: usa dados de data.js
-  }
-}
-
 // ── Init ──────────────────────────────────────────────────────────
 let JOGOS = [];
 
@@ -397,7 +360,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       `<p class="msg-carregando" style="color:#ef5350">Erro ao carregar jogos: ${err.message}</p>`;
     return;
   }
-  await carregarResultados();
   iniciarJogos();
   renderClassificacao();
   renderMataMata();
