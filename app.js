@@ -360,8 +360,14 @@ async function carregarResultados() {
 
     // Aplica placares sobre JOGOS (sobrescreve dados de data.js)
     JOGOS.forEach(j => {
-      const chave = `${j.casa}|${j.fora}`;
-      if (res[chave] !== undefined) j.placar = res[chave];
+      const chave    = `${j.casa}|${j.fora}`;
+      const chaveRev = `${j.fora}|${j.casa}`;
+      if (res[chave] !== undefined) {
+        j.placar = res[chave];
+      } else if (res[chaveRev] !== undefined) {
+        // aceita ordem invertida — troca casa/fora nos gols
+        j.placar = { casa: res[chaveRev].fora, fora: res[chaveRev].casa };
+      }
     });
 
     // Exibe timestamp da última atualização

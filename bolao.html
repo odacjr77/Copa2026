@@ -318,7 +318,7 @@
       <button class="btn-aba" onclick="location.href='index.html'">📊 Grupos</button>
       <button class="btn-aba" onclick="location.href='index.html'">🏅 Mata-Mata</button>
       <button class="btn-aba ativa">🏇 Bolão</button>
-      <button class="btn-aba" onclick="location.href='estatisticas.html'">🤪 Toscas</button>
+      <button class="btn-aba" onclick="location.href='estatisticas.html'">📊 Estatísticas</button>
     </nav>
   </header>
 
@@ -378,7 +378,7 @@
   <script>
   // ── Configuração ─────────────────────────────────────────
   const SHEET_ID      = '15doR2R2qaBXsiH-xrekydCPEsldxUKvg99EYAOiblyU';
-  const ANIM_TOTAL_MS = 20000;   // duração total da animação
+  const ANIM_TOTAL_MS = 30000;   // duração total da animação
   const CSS_TRANS_MS  = 1400;    // duração da transição CSS (largura da barra)
   const ROW_H         = 52;      // altura de cada linha (px) — mobile
   const ROW_H_LARGE   = 52;
@@ -479,10 +479,11 @@
       const color = CORES_JOGADORES[name] || CORES_AUTO[autoColorIdx++ % CORES_AUTO.length];
 
       // Colunas pares (2,4,6,...) = acumulado após cada rodada
+      // Loop até o fim da linha para detectar qualquer número de rodadas
       const scores = [];
-      for (let r = 1; r <= 20; r++) {
+      for (let r = 1; r * 2 < row.length; r++) {
         const col = r * 2;
-        if (col < row.length && row[col] !== '') {
+        if (row[col] !== '') {
           scores.push(parseInt(row[col]) || 0);
         }
       }

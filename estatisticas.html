@@ -172,6 +172,94 @@
       margin-top: 10px;
     }
 
+    /* ── Botão de evidências ──────────────────────────────── */
+    .btn-evidencia {
+      background: none;
+      border: 1px solid #1e3a5f;
+      color: #546e7a;
+      border-radius: 6px;
+      padding: 4px 9px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+    .btn-evidencia:hover { background: #1e3a5f; color: #90caf9; }
+
+    /* ── Modal de evidências ──────────────────────────────── */
+    .evid-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.82);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .evid-panel {
+      background: #131929;
+      border: 1px solid #1e3a5f;
+      border-radius: 14px;
+      max-width: 580px;
+      width: 100%;
+      max-height: 82vh;
+      overflow: auto;
+      padding: 24px;
+      position: relative;
+    }
+    .evid-close {
+      position: absolute;
+      top: 12px; right: 14px;
+      background: none; border: none;
+      color: #78909c; font-size: 1.4rem;
+      cursor: pointer; line-height: 1;
+    }
+    .evid-close:hover { color: #ef5350; }
+    .evid-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #64b5f6;
+      margin: 0 0 14px;
+      padding-right: 28px;
+    }
+    .evid-summary {
+      font-size: 0.82rem;
+      color: #78909c;
+      margin: 0 0 14px;
+      padding: 8px 12px;
+      background: #0d1b2e;
+      border-radius: 8px;
+      border-left: 3px solid #1e3a5f;
+      line-height: 1.5;
+    }
+    .evid-summary strong { color: #90caf9; }
+    .evid-table-wrap { overflow-x: auto; }
+    .evid-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .evid-table th {
+      text-align: left;
+      color: #546e7a;
+      padding: 6px 10px;
+      border-bottom: 1px solid #1e3a5f;
+      font-weight: 700;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .evid-table td {
+      padding: 7px 10px;
+      color: #90a4ae;
+      border-bottom: 1px solid #0d1b2e;
+    }
+    .evid-table tr:last-child td { border-bottom: none; }
+    .evid-destaque td { color: #fff !important; background: rgba(30,90,40,0.25); }
+    .evid-zero td { background: rgba(80,20,20,0.2); }
+
     @media (min-width: 600px) {
       .stats-wrap { padding: 20px 24px 60px; }
       .page-title { font-size: 1.7rem; }
@@ -198,7 +286,7 @@
       <button class="btn-aba" onclick="location.href='index.html'">📊 Grupos</button>
       <button class="btn-aba" onclick="location.href='index.html'">🏅 Mata-Mata</button>
       <button class="btn-aba" onclick="location.href='bolao.html'">🏇 Bolão</button>
-      <button class="btn-aba ativa">🤪 Toscas</button>
+      <button class="btn-aba ativa">📊 Estatísticas</button>
     </nav>
   </header>
 
@@ -280,6 +368,15 @@
 
     </div>
   </main>
+
+  <!-- ── Modal de Evidências ────────────────────────────────── -->
+  <div class="evid-overlay" id="evidModal" onclick="if(event.target===this)closeEvidencia()">
+    <div class="evid-panel">
+      <button class="evid-close" onclick="closeEvidencia()">✕</button>
+      <h3 class="evid-title" id="evidTitle"></h3>
+      <div id="evidBody"></div>
+    </div>
+  </div>
 
   <footer>
     <p>Copa do Mundo FIFA 2026 · Horários em BRT (Brasília, UTC-3)</p>
@@ -365,9 +462,9 @@
       const name = row[0].replace(/[\[\]]/g, '').trim();
 
       const cumulative = [];
-      for (let r = 1; r <= 20; r++) {
+      for (let r = 1; r * 2 < row.length; r++) {
         const col = r * 2;
-        if (col < row.length && row[col] !== '') {
+        if (row[col] !== '') {
           cumulative.push(parseInt(row[col]) || 0);
         }
       }
@@ -472,7 +569,7 @@
   const MEDALS      = ['🥇', '🥈', '🥉'];
   const MEDAL_CLASS = ['ouro', 'prata', 'bronze'];
 
-  function renderPodium(id, ranking) {
+  function renderPodium(id, ranking, tipo) {
     const el = document.getElementById(id);
     if (!ranking.length) {
       el.innerHTML = '<p class="sem-dados">Dados insuficientes — volte após mais rodadas disputadas.</p>';
@@ -487,8 +584,140 @@
           <strong class="podium-value">${p.value}</strong>
           <span class="podium-label">${p.label}</span>
         </span>
+        <button class="btn-evidencia"
+                data-tipo="${tipo}"
+                data-nome="${p.name.replace(/"/g, '&quot;')}"
+                onclick="openEvidencia(this)"
+                title="Ver evidências da análise">🔍 Ver</button>
       </div>
     `).join('');
+  }
+
+  // ── Análise global (compartilhada pelos modais de evidência) ──
+  let ANALYSIS = null;
+
+  const NOMES_PREMIOS = {
+    jagger:   'Troféu Mick Jagger',
+    estranho: 'Prêmio Doutor Estranho',
+    zebra:    'Prêmio Zebra-Man',
+  };
+
+  function openEvidencia(btn) {
+    if (!ANALYSIS) return;
+    const tipo   = btn.dataset.tipo;
+    const nome   = btn.dataset.nome;
+    const player = ANALYSIS.players.find(p => p.name === nome);
+    if (!player) return;
+
+    document.getElementById('evidTitle').textContent =
+      `${nome} · ${NOMES_PREMIOS[tipo]}`;
+    document.getElementById('evidBody').innerHTML =
+      renderEvidenciaTable(tipo, player, ANALYSIS.roundAvgs, ANALYSIS.globalAvg);
+    document.getElementById('evidModal').style.display = 'flex';
+  }
+
+  function closeEvidencia() {
+    document.getElementById('evidModal').style.display = 'none';
+  }
+
+  function renderEvidenciaTable(tipo, player, roundAvgs, globalAvg) {
+    const { name, roundScores } = player;
+    const mean = roundScores.reduce((a, b) => a + b, 0) / (roundScores.length || 1);
+
+    if (tipo === 'jagger') {
+      const highRounds   = roundAvgs.filter(a => a > globalAvg).length;
+      const jaggedRounds = roundScores.filter((s, i) =>
+        s === 0 && (roundAvgs[i] ?? 0) > globalAvg).length;
+
+      const rows = roundScores.map((s, i) => {
+        const avg      = roundAvgs[i] ?? 0;
+        const isJagged = s === 0 && avg > globalAvg;
+        const isHigh   = avg > globalAvg;
+        return `<tr class="${isJagged ? 'evid-destaque' : ''}">
+          <td>Rod.&nbsp;${i + 1}</td>
+          <td style="color:#90caf9;font-weight:700">${s} pts</td>
+          <td>${avg.toFixed(1)} pts</td>
+          <td>${isJagged ? '🎸 Zerou!' : isHigh ? '⚠️ Boa rodada' : '✅'}</td>
+        </tr>`;
+      }).join('');
+
+      return `
+        <p class="evid-summary">Zerou <strong>${jaggedRounds}</strong>
+        de <strong>${highRounds}</strong> rodadas em que o grupo foi bem
+        (média acima de ${globalAvg.toFixed(1)} pts)</p>
+        <div class="evid-table-wrap"><table class="evid-table">
+          <thead><tr><th>Rodada</th><th>${name}</th><th>Média geral</th><th>Status</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>`;
+    }
+
+    if (tipo === 'estranho') {
+      const peak   = Math.max(...roundScores);
+      const zeros  = roundScores.filter(v => v === 0).length;
+      const stdDev = Math.sqrt(
+        roundScores.reduce((acc, v) => acc + (v - mean) ** 2, 0) / roundScores.length);
+      const cv = mean > 0 ? (stdDev / mean) * 100 : 0;
+
+      const rows = roundScores.map((s, i) => {
+        const delta  = s - mean;
+        const isPeak = s === peak && s > 0;
+        const isZero = s === 0;
+        return `<tr class="${isPeak ? 'evid-destaque' : isZero ? 'evid-zero' : ''}">
+          <td>Rod.&nbsp;${i + 1}</td>
+          <td style="color:#90caf9;font-weight:700">${s} pts</td>
+          <td style="color:${delta >= 0 ? '#66bb6a' : '#ef5350'}">${delta >= 0 ? '+' : ''}${delta.toFixed(1)}</td>
+          <td>${isPeak ? '🌟 Pico!' : isZero ? '💤 Zero' : '·'}</td>
+        </tr>`;
+      }).join('');
+
+      return `
+        <p class="evid-summary">Pico de <strong>${peak} pts</strong> ·
+        <strong>${zeros}</strong> rodada${zeros !== 1 ? 's' : ''} zerada${zeros !== 1 ? 's' : ''} ·
+        variância <strong>${cv.toFixed(0)}%</strong>
+        (média pessoal: ${mean.toFixed(1)} pts)</p>
+        <div class="evid-table-wrap"><table class="evid-table">
+          <thead><tr><th>Rodada</th><th>${name}</th><th>vs Sua Média</th><th>Status</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>`;
+    }
+
+    if (tipo === 'zebra') {
+      const diffIdx = roundAvgs.reduce((acc, avg, i) => {
+        if (avg < globalAvg) acc.push(i);
+        return acc;
+      }, []);
+      if (!diffIdx.length) {
+        return '<p class="sem-dados">Nenhuma rodada difícil detectada ainda.</p>';
+      }
+      const zebraTotal = diffIdx.reduce((sum, i) => sum + (roundScores[i] ?? 0), 0);
+      const zebraWins  = diffIdx.filter(i => (roundScores[i] ?? 0) > roundAvgs[i]).length;
+
+      const rows = diffIdx.map(i => {
+        const s     = roundScores[i] ?? 0;
+        const avg   = roundAvgs[i];
+        const above = s > avg;
+        return `<tr class="${above ? 'evid-destaque' : ''}">
+          <td>Rod.&nbsp;${i + 1}</td>
+          <td>${avg.toFixed(1)} pts</td>
+          <td style="color:#90caf9;font-weight:700">${s} pts</td>
+          <td style="color:${above ? '#66bb6a' : '#ef5350'}">
+            ${above ? `✅ +${(s - avg).toFixed(1)}` : `❌ −${(avg - s).toFixed(1)}`}
+          </td>
+        </tr>`;
+      }).join('');
+
+      return `
+        <p class="evid-summary">Rodadas difíceis (média &lt; ${globalAvg.toFixed(1)} pts):
+        <strong>${diffIdx.length}</strong> ·
+        Superou a média em <strong>${zebraWins}</strong> delas ·
+        Total zebra: <strong>+${zebraTotal} pts</strong></p>
+        <div class="evid-table-wrap"><table class="evid-table">
+          <thead><tr><th>Rodada</th><th>Média geral</th><th>${name}</th><th>Resultado</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>`;
+    }
+
+    return '';
   }
 
   // ── Init ────────────────────────────────────────────────
@@ -503,9 +732,22 @@
 
     try {
       const players = await loadPlayers();
-      renderPodium('podiumJagger',  calcMickJagger(players));
-      renderPodium('podiumEstranho', calcDoutorEstranho(players));
-      renderPodium('podiumZebra',   calcZebraMan(players));
+
+      // Calcula médias por rodada para compartilhar com os modais de evidência
+      const numRounds = Math.max(...players.map(p => p.roundScores.length), 0);
+      const roundAvgs = Array.from({ length: numRounds }, (_, r) => {
+        const vals = players.map(p => p.roundScores[r] ?? 0);
+        return vals.reduce((a, b) => a + b, 0) / (vals.length || 1);
+      });
+      const globalAvg = roundAvgs.length
+        ? roundAvgs.reduce((a, b) => a + b, 0) / roundAvgs.length
+        : 0;
+
+      ANALYSIS = { players, roundAvgs, globalAvg };
+
+      renderPodium('podiumJagger',   calcMickJagger(players),    'jagger');
+      renderPodium('podiumEstranho', calcDoutorEstranho(players), 'estranho');
+      renderPodium('podiumZebra',    calcZebraMan(players),       'zebra');
 
       elLoad.style.display = 'none';
       elMain.style.display = 'block';
