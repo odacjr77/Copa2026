@@ -1,43 +1,175 @@
 {
-  "México|África do Sul": { "casa": 2, "fora": 0 },
-  "Coreia do Sul|Tchéquia": { "casa": 2, "fora": 1 },
-  "Canadá|Bósnia e Herzegovina": { "casa": 1, "fora": 1 },
-  "Catar|Suíça": { "casa": 1, "fora": 1 },
-  "Brasil|Marrocos": { "casa": 1, "fora": 1 },
-  "Haiti|Escócia": { "casa": 0, "fora": 1 },
-  "Estados Unidos|Paraguai": { "casa": 4, "fora": 1 },
-  "Austrália|Turquia": { "casa": 2, "fora": 0 },
-  "Alemanha|Curaçao": { "casa": 7, "fora": 1 },
-  "Costa do Marfim|Equador": { "casa": 1, "fora": 0 },
-  "Países Baixos|Japão": { "casa": 2, "fora": 2 },
-  "Suécia|Tunísia": { "casa": 5, "fora": 1 },
-  "Bélgica|Egito": { "casa": 1, "fora": 1 },
-  "Irã|Nova Zelândia": { "casa": 2, "fora": 2 },
-  "Espanha|Cabo Verde": { "casa": 0, "fora": 0 },
-  "Arábia Saudita|Uruguai": { "casa": 1, "fora": 1 },
-  "França|Senegal": { "casa": 3, "fora": 1 },
-  "Noruega|Iraque": { "casa": 4, "fora": 1 },
-  "Argentina|Argélia": { "casa": 3, "fora": 0 },
-  "Áustria|Jordânia": { "casa": 3, "fora": 1 },
-  "Portugal|RD Congo": { "casa": 1, "fora": 1 },
-  "Colômbia|Uzbequistão": { "casa": 3, "fora": 1 },
-  "Inglaterra|Croácia": { "casa": 4, "fora": 2 },
-  "Gana|Panamá": { "casa": 1, "fora": 0 },
-  "México|Coreia do Sul": { "casa": 1, "fora": 0 },
-  "Tchéquia|África do Sul": { "casa": 1, "fora": 1 },
-  "Suíça|Bósnia e Herzegovina": { "casa": 4, "fora": 1 },
-  "Canadá|Catar": { "casa": 6, "fora": 0 },
-  "Marrocos|Escócia": { "casa": 1, "fora": 0 },
-  "Brasil|Haiti": { "casa": 3, "fora": 0 },
-  "Estados Unidos|Austrália": { "casa": 2, "fora": 0 },
-  "Turquia|Paraguai": { "casa": 0, "fora": 1 },
-  "Alemanha|Costa do Marfim": { "casa": 2, "fora": 1 },
-  "Equador|Curaçao": { "casa": 0, "fora": 0 },
-  "Países Baixos|Suécia": { "casa": 5, "fora": 1 },
-  "Japão|Tunísia": { "casa": 4, "fora": 0 },
-  "Bélgica|Irã": { "casa": 0, "fora": 0 },
-  "Egito|Nova Zelândia": { "casa": 3, "fora": 1 },
-  "Espanha|Arábia Saudita": { "casa": 4, "fora": 0 },
-  "Uruguai|Cabo Verde": { "casa": 2, "fora": 2 },
-  "_atualizado": "2026-06-22T14:00:00Z"
+  "México|África do Sul": {
+    "casa": 2,
+    "fora": 0
+  },
+  "Coreia do Sul|Tchéquia": {
+    "casa": 2,
+    "fora": 1
+  },
+  "Canadá|Bósnia e Herzegovina": {
+    "casa": 1,
+    "fora": 1
+  },
+  "Catar|Suíça": {
+    "casa": 1,
+    "fora": 1
+  },
+  "Brasil|Marrocos": {
+    "casa": 1,
+    "fora": 1
+  },
+  "Haiti|Escócia": {
+    "casa": 0,
+    "fora": 1
+  },
+  "Estados Unidos|Paraguai": {
+    "casa": 4,
+    "fora": 1
+  },
+  "Austrália|Turquia": {
+    "casa": 2,
+    "fora": 0
+  },
+  "Alemanha|Curaçao": {
+    "casa": 7,
+    "fora": 1
+  },
+  "Costa do Marfim|Equador": {
+    "casa": 1,
+    "fora": 0
+  },
+  "Países Baixos|Japão": {
+    "casa": 2,
+    "fora": 2
+  },
+  "Suécia|Tunísia": {
+    "casa": 5,
+    "fora": 1
+  },
+  "Bélgica|Egito": {
+    "casa": 1,
+    "fora": 1
+  },
+  "Irã|Nova Zelândia": {
+    "casa": 2,
+    "fora": 2
+  },
+  "Espanha|Cabo Verde": {
+    "casa": 0,
+    "fora": 0
+  },
+  "Arábia Saudita|Uruguai": {
+    "casa": 1,
+    "fora": 1
+  },
+  "França|Senegal": {
+    "casa": 3,
+    "fora": 1
+  },
+  "Noruega|Iraque": {
+    "casa": 4,
+    "fora": 1
+  },
+  "Argentina|Argélia": {
+    "casa": 3,
+    "fora": 0
+  },
+  "Áustria|Jordânia": {
+    "casa": 3,
+    "fora": 1
+  },
+  "Portugal|RD Congo": {
+    "casa": 1,
+    "fora": 1
+  },
+  "Colômbia|Uzbequistão": {
+    "casa": 3,
+    "fora": 1
+  },
+  "Inglaterra|Croácia": {
+    "casa": 4,
+    "fora": 2
+  },
+  "Gana|Panamá": {
+    "casa": 1,
+    "fora": 0
+  },
+  "México|Coreia do Sul": {
+    "casa": 1,
+    "fora": 0
+  },
+  "Tchéquia|África do Sul": {
+    "casa": 1,
+    "fora": 1
+  },
+  "Suíça|Bósnia e Herzegovina": {
+    "casa": 4,
+    "fora": 1
+  },
+  "Canadá|Catar": {
+    "casa": 6,
+    "fora": 0
+  },
+  "Marrocos|Escócia": {
+    "casa": 1,
+    "fora": 0
+  },
+  "Brasil|Haiti": {
+    "casa": 3,
+    "fora": 0
+  },
+  "Estados Unidos|Austrália": {
+    "casa": 2,
+    "fora": 0
+  },
+  "Turquia|Paraguai": {
+    "casa": 0,
+    "fora": 1
+  },
+  "Alemanha|Costa do Marfim": {
+    "casa": 2,
+    "fora": 1
+  },
+  "Equador|Curaçao": {
+    "casa": 0,
+    "fora": 0
+  },
+  "Países Baixos|Suécia": {
+    "casa": 5,
+    "fora": 1
+  },
+  "Japão|Tunísia": {
+    "casa": 4,
+    "fora": 0
+  },
+  "Bélgica|Irã": {
+    "casa": 0,
+    "fora": 0
+  },
+  "Egito|Nova Zelândia": {
+    "casa": 3,
+    "fora": 1
+  },
+  "Espanha|Arábia Saudita": {
+    "casa": 4,
+    "fora": 0
+  },
+  "Uruguai|Cabo Verde": {
+    "casa": 2,
+    "fora": 2
+  },
+  "Tunísia|Japão": {
+    "casa": 0,
+    "fora": 4
+  },
+  "Nova Zelândia|Egito": {
+    "casa": 1,
+    "fora": 3
+  },
+  "Escócia|Marrocos": {
+    "casa": 0,
+    "fora": 1
+  },
+  "_atualizado": "2026-06-22T17:57:02Z"
 }
