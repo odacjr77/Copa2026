@@ -195,5 +195,13 @@
     "casa": 0,
     "fora": 0
   },
-  "_atualizado": "2026-06-23T23:59:20Z"
+  "Panamá|Croácia": {
+    "casa": 0,
+    "fora": 1
+  },
+  "Colômbia|RD Congo": {
+    "casa": 1,
+    "fora": 0
+  },
+  "_atualizado": "2026-06-24T04:18:52Z"
 }
