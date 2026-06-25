@@ -227,5 +227,13 @@
     "casa": 1,
     "fora": 0
   },
-  "_atualizado": "2026-06-25T21:16:52Z"
+  "Curaçao|Costa do Marfim": {
+    "casa": 0,
+    "fora": 2
+  },
+  "Equador|Alemanha": {
+    "casa": 2,
+    "fora": 1
+  },
+  "_atualizado": "2026-06-25T22:51:51Z"
 }
