@@ -235,5 +235,21 @@
     "casa": 2,
     "fora": 1
   },
-  "_atualizado": "2026-06-26T00:10:52Z"
+  "Japão|Suécia": {
+    "casa": 1,
+    "fora": 1
+  },
+  "Tunísia|Países Baixos": {
+    "casa": 1,
+    "fora": 3
+  },
+  "Paraguai|Austrália": {
+    "casa": 0,
+    "fora": 0
+  },
+  "Turquia|Estados Unidos": {
+    "casa": 3,
+    "fora": 2
+  },
+  "_atualizado": "2026-06-26T04:43:54Z"
 }
