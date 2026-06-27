@@ -259,5 +259,21 @@
     "casa": 5,
     "fora": 0
   },
-  "_atualizado": "2026-06-27T01:24:52Z"
+  "Cabo Verde|Arábia Saudita": {
+    "casa": 0,
+    "fora": 0
+  },
+  "Uruguai|Espanha": {
+    "casa": 0,
+    "fora": 1
+  },
+  "Egito|Irã": {
+    "casa": 1,
+    "fora": 1
+  },
+  "Nova Zelândia|Bélgica": {
+    "casa": 1,
+    "fora": 5
+  },
+  "_atualizado": "2026-06-27T05:37:07Z"
 }
