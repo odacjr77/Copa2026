@@ -371,5 +371,9 @@
     "casa": 0,
     "fora": 1
   },
-  "_atualizado": "2026-07-05T21:02:05Z"
+  "Brasil|Noruega": {
+    "casa": 1,
+    "fora": 2
+  },
+  "_atualizado": "2026-07-05T22:16:01Z"
 }
