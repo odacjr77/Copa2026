@@ -379,5 +379,9 @@
     "casa": 2,
     "fora": 3
   },
-  "_atualizado": "2026-07-06T19:21:30Z"
+  "Portugal|Espanha": {
+    "casa": 0,
+    "fora": 1
+  },
+  "_atualizado": "2026-07-06T21:13:55Z"
 }
